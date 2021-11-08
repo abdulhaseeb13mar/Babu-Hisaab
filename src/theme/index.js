@@ -1,3 +1,4 @@
 import constants from './constants';
+import color from './color';
 
-export {constants};
+export {constants, color};

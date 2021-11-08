@@ -2,16 +2,16 @@ import React, {useEffect} from 'react';
 import {Platform} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {Navigator} from '../utils';
-import {connect} from 'react-redux';
-import {setHeight} from '../redux/actions';
+import {connect, useSelector} from 'react-redux';
+import {setHeight, setUserInfoAction} from '../redux/actions';
 import {height} from '../components';
 import {
   useSafeAreaInsets,
   useSafeAreaFrame,
 } from 'react-native-safe-area-context';
 import {Provider as PaperProvider, DefaultTheme} from 'react-native-paper';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import constants from '../theme/constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {constants} from '../theme';
 
 //Stacks
 import AuthStack from './auth';
@@ -24,26 +24,26 @@ const Routes = props => {
     (Platform.OS === 'ios' ? height : frame.height) -
     (insets.bottom + insets.top);
 
-  const isAuthenticated = false;
+  const user = useSelector(state => state.userReducer);
 
   useEffect(() => {
+    getAsyncUserInfo();
     SetHeight();
-    // getAsyncUserInfo();
   }, []);
 
   const SetHeight = async () => {
     await props.setHeight(HEIGHT);
   };
 
-  //   const getAsyncUserInfo = async () => {
-  //     try {
-  //       const userInfo = await AsyncStorage.getItem(constants.async.user);
-  //       let data = userInfo != null ? JSON.parse(userInfo) : {userType: 'none'};
-  //       props.setUserInfoAction(data);
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   };
+  const getAsyncUserInfo = async () => {
+    try {
+      const userInfo = await AsyncStorage.getItem(constants.async.user);
+      let data = userInfo != null ? JSON.parse(userInfo) : null;
+      props.setUserInfoAction(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const LightTheme = {
     ...DefaultTheme,
@@ -61,12 +61,10 @@ const Routes = props => {
     <NavigationContainer
       ref={navigatorRef => Navigator.setTopLevelNavigator(navigatorRef)}>
       <PaperProvider theme={LightTheme}>
-        {isAuthenticated ? <AppStack /> : <AuthStack />}
+        {user !== null ? <AppStack /> : <AuthStack />}
       </PaperProvider>
     </NavigationContainer>
   );
 };
 
-const mapStateToProps = state => ({});
-
-export default connect(mapStateToProps, {setHeight})(Routes);
+export default connect(null, {setUserInfoAction, setHeight})(Routes);

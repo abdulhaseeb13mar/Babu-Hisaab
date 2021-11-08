@@ -2,7 +2,9 @@ const Constants = {
   async: {
     user: 'user',
   },
-  collections: {},
+  collections: {
+    USERS_INFO: 'USERS_INFO',
+  },
   actionTypes: {
     SET_USER_INFO: 'SET_USER_INFO',
     SET_CURRENT_SCREEN: 'SET_CURRENT_SCREEN',

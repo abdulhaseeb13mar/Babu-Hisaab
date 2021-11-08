@@ -11,6 +11,7 @@ const height = InitalHeight;
 const userReducer = (state = userInfo, action) => {
   switch (action.type) {
     case actionTypes.SET_USER_INFO:
+      if (action.payload === null) return null;
       state = Object.assign({}, state, {...action.payload});
       return state;
 
