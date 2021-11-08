@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "545943555200",
+    "project_id": "babu-hisaab",
+    "storage_bucket": "babu-hisaab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:545943555200:android:5979f5ff2b57a3a7a0aa65",
+        "android_client_info": {
+          "package_name": "com.babuhisaab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "545943555200-221feid91he8mvnns837l63l641ai7g3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgS06ZTprx62tDcgeV_UIxj0TCA_aikDA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "545943555200-221feid91he8mvnns837l63l641ai7g3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
