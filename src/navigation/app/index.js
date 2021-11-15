@@ -8,7 +8,7 @@ import {constants} from '../../theme';
 
 const Stack = createStackNavigator();
 
-import {Home} from '../../screens/app';
+import {Home, AddDues} from '../../screens/app';
 
 export default function AppStack() {
   const {appScreens} = constants;
@@ -24,6 +24,7 @@ export default function AppStack() {
         },
       }}>
       <Stack.Screen name={appScreens.Home} component={Home} />
+      <Stack.Screen name={appScreens.AddDues} component={AddDues} />
     </Stack.Navigator>
   );
 }

@@ -7,11 +7,26 @@ const {actionTypes} = constants;
 const userInfo = null;
 const currentScreen = 'Home';
 const height = InitalHeight;
+const appData = {
+  allUsers: [],
+};
 
 const userReducer = (state = userInfo, action) => {
   switch (action.type) {
     case actionTypes.SET_USER_INFO:
       if (action.payload === null) return null;
+      state = Object.assign({}, state, {...action.payload});
+      return state;
+
+    default:
+      break;
+  }
+  return state;
+};
+
+const AppReducer = (state = appData, action) => {
+  switch (action.type) {
+    case actionTypes.SET_ALL_USERS:
       state = Object.assign({}, state, {...action.payload});
       return state;
 
@@ -49,4 +64,5 @@ export default combineReducers({
   userReducer,
   HeightReducer,
   ScreenReducer,
+  AppReducer,
 });

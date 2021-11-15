@@ -31,6 +31,7 @@ const Login = props => {
       auth()
         .signInWithEmailAndPassword(email, password)
         .then(async ({user}) => {
+          console.log(user);
           const userInfo = await firestore()
             .collection(constants.collections.USERS_INFO)
             .doc(user.uid)
@@ -45,7 +46,6 @@ const Login = props => {
             } catch (e) {
               console.log(e);
             }
-            // setLoading(false);
           }
         })
         .catch(err => {
