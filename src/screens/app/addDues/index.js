@@ -8,6 +8,7 @@ import {useSelector} from 'react-redux';
 import {color, constants} from '../../../theme';
 import {width} from '../../../components/Responsive';
 import firestore from '@react-native-firebase/firestore';
+import {DuesAdded} from '../../../components/modals';
 
 const AddDues = () => {
   const height = useSelector(state => state.HeightReducer);
@@ -24,6 +25,7 @@ const AddDues = () => {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
+  const [addedModal, setAddedModal] = useState(false);
 
   const handleCardPress = item => {
     let updatedSelection = {...selectedUsers};
@@ -69,15 +71,20 @@ const AddDues = () => {
         });
       })
       .then(() => {
+        setAddedModal(true);
         setLoading(false);
-        setAmount('');
-        setDescription('');
-        setSelectedUsers({});
       })
       .catch(err => {
         setLoading(false);
         console.log(err);
       });
+  };
+
+  const clearFields = () => {
+    setAmount('');
+    setDescription('');
+    setSelectedUsers({});
+    setAddedModal(false);
   };
 
   return (
@@ -156,14 +163,21 @@ const AddDues = () => {
       <Button
         onPress={addDues}
         loading={loading}
+        disabled={loading}
         mode="contained"
         style={{
           borderRadius: 10,
           borderColor: 'black',
           marginTop: height * 0.015,
         }}>
-        ADD DUES
+        {loading ? '' : 'ADD DUES'}
       </Button>
+      <DuesAdded
+        isVisible={addedModal}
+        onBackdropPress={clearFields}
+        selectedUsers={selectedUsers}
+        amount={amount}
+      />
     </WrapperScreen>
   );
 };
