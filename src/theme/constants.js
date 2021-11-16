@@ -19,6 +19,7 @@ const Constants = {
   appScreens: {
     Home: 'Home',
     AddDues: 'AddDues',
+    DueSelection: 'DueSelection',
   },
   snackbarColors: {
     Success: '#2e7d32',

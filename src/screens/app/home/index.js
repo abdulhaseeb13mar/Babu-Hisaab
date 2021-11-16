@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, ActivityIndicator, FlatList} from 'react-native';
 import constants from '../../../theme/constants';
 import firestore from '@react-native-firebase/firestore';
@@ -14,6 +14,7 @@ const Home = () => {
   const {collections, actionTypes, appScreens} = constants;
 
   const height = useSelector(state => state.HeightReducer);
+  const user = useSelector(state => state.userReducer);
   const {allUsers} = useSelector(state => state.AppReducer);
 
   useEffect(() => {
@@ -25,13 +26,13 @@ const Home = () => {
       .collection(collections.USERS_INFO)
       .get()
       .then(collection => {
-        const allUsers = collection.docs.map(doc => doc.data());
-        console.log(allUsers);
+        const allUsers = collection.docs
+          .map(doc => doc.data())
+          .filter(thisUser => thisUser.id !== user.id);
         dispatch({
           type: actionTypes.SET_ALL_USERS,
           payload: {allUsers},
         });
-        // setAllUsers(allUsers);
       })
       .catch(e => console.log(e));
   };

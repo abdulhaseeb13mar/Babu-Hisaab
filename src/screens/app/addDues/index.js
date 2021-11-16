@@ -70,9 +70,42 @@ const AddDues = () => {
           return Promise.resolve(true);
         });
       })
-      .then(() => {
-        setAddedModal(true);
-        setLoading(false);
+      .then(async () => {
+        await firestore()
+          .runTransaction(async transaction => {
+            for (let i = 0; i < usersSelected.length; i++) {
+              const userId = usersSelected[i];
+              const userRef = firestore()
+                .collection(collections.DUES_ON_ME)
+                .doc(userId);
+              await transaction.get(userRef).then(snapshot => {
+                if (!snapshot.exists) {
+                  transaction.set(userRef, {
+                    [user.id]: [{amount, description}],
+                  });
+                } else {
+                  let copyData = {...snapshot.data()};
+                  if (copyData[user.id]) {
+                    let copyArray = [...copyData[user.id]];
+                    copyArray.push({amount, description});
+                    copyData[user.id] = copyArray;
+                  } else {
+                    copyData[user.id] = [{amount, description}];
+                  }
+                  transaction.set(userRef, copyData);
+                }
+              });
+            }
+            return Promise.resolve(true);
+          })
+          .then(() => {
+            setAddedModal(true);
+            setLoading(false);
+          })
+          .catch(err => {
+            setLoading(false);
+            console.log(err);
+          });
       })
       .catch(err => {
         setLoading(false);
