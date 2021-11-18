@@ -14,6 +14,7 @@ import {
   DueSelection,
   AllDues,
   MyDuesOnSomeone,
+  SomeoneDuesOnMe,
 } from '../../screens/app';
 
 export default function AppStack() {
@@ -36,6 +37,10 @@ export default function AppStack() {
       <Stack.Screen
         name={appScreens.MyDuesOnSomeone}
         component={MyDuesOnSomeone}
+      />
+      <Stack.Screen
+        name={appScreens.SomeoneDuesOnMe}
+        component={SomeoneDuesOnMe}
       />
     </Stack.Navigator>
   );

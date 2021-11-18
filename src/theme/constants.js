@@ -23,6 +23,7 @@ const Constants = {
     DueSelection: 'DueSelection',
     AllDues: 'AllDues',
     MyDuesOnSomeone: 'MyDuesOnSomeone',
+    SomeoneDuesOnMe: 'SomeoneDuesOnMe',
   },
   snackbarColors: {
     Success: '#2e7d32',

@@ -38,7 +38,12 @@ const DueSelection = () => {
           selectedUser={selectedUser}
           height={height}
           duesOnMe={false}
-          onPress={() => {}}
+          onPress={() =>
+            navigation.navigate(
+              constants.appScreens.SomeoneDuesOnMe,
+              selectedUser,
+            )
+          }
         />
       </View>
     </WrapperScreen>

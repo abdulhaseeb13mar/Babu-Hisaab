@@ -6,7 +6,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import constants from '../../../theme/constants';
 import firestore from '@react-native-firebase/firestore';
 
-const MyDuesOnSomeone = props => {
+const SomeoneDueOnMe = props => {
   useEffect(() => {
     fetchThisPersonDuesOnMe();
   }, []);
@@ -21,7 +21,7 @@ const MyDuesOnSomeone = props => {
   const fetchThisPersonDuesOnMe = async () => {
     setLoading(true);
     await firestore()
-      .collection(collections.DUES_ON_OTHER)
+      .collection(collections.DUES_ON_ME)
       .doc(user.id)
       .get()
       .then(snapshot => {
@@ -49,8 +49,7 @@ const MyDuesOnSomeone = props => {
             fontSize: 30,
             fontWeight: 'bold',
           }}>
-          MY DUES ON{'\n'}
-          {friendInfo.name.toUpperCase()}
+          {friendInfo.name.toUpperCase()} DUES ON{'\n'}ME
         </Text>
         {loading ? (
           <View
@@ -67,15 +66,17 @@ const MyDuesOnSomeone = props => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{alignItems: 'center'}}
             renderItem={({item}) => (
-              <DueCard
-                dueInfo={item}
-                duesOnMe={false}
-                friendInfo={friendInfo}
-              />
+              <DueCard dueInfo={item} duesOnMe={true} friendInfo={friendInfo} />
             )}
             ListEmptyComponent={
-              <Text style={{marginTop: 30, fontSize: 18}}>
-                You dont have any dues on {friendInfo.name}
+              <Text
+                style={{
+                  marginTop: 30,
+                  fontSize: 18,
+                  color: 'black',
+                  textAlign: 'center',
+                }}>
+                {friendInfo.name} does not have{'\n'}any dues on you.
               </Text>
             }
           />
@@ -85,4 +86,4 @@ const MyDuesOnSomeone = props => {
   );
 };
 
-export default MyDuesOnSomeone;
+export default SomeoneDueOnMe;
