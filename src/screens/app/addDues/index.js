@@ -41,6 +41,7 @@ const AddDues = () => {
     setLoading(true);
     const usersSelected = Object.keys(selectedUsers);
     let dataTobeUpdated = {};
+    const date = Date.now().toString();
     await firestore()
       .runTransaction(transaction => {
         return transaction.get(UserRef).then(snapshot => {
@@ -50,6 +51,7 @@ const AddDues = () => {
                 {
                   amount,
                   description,
+                  date,
                 },
               ];
             });
@@ -59,10 +61,10 @@ const AddDues = () => {
             usersSelected.map(id => {
               if (copyData[id]) {
                 let copyArray = [...copyData[id]];
-                copyArray.push({amount, description});
+                copyArray.push({amount, description, date});
                 copyData[id] = copyArray;
               } else {
-                copyData[id] = [{amount, description}];
+                copyData[id] = [{amount, description, date}];
               }
             });
             transaction.set(UserRef, copyData);
@@ -81,16 +83,16 @@ const AddDues = () => {
               await transaction.get(userRef).then(snapshot => {
                 if (!snapshot.exists) {
                   transaction.set(userRef, {
-                    [user.id]: [{amount, description}],
+                    [user.id]: [{amount, description, date}],
                   });
                 } else {
                   let copyData = {...snapshot.data()};
                   if (copyData[user.id]) {
                     let copyArray = [...copyData[user.id]];
-                    copyArray.push({amount, description});
+                    copyArray.push({amount, description, date});
                     copyData[user.id] = copyArray;
                   } else {
-                    copyData[user.id] = [{amount, description}];
+                    copyData[user.id] = [{amount, description, date}];
                   }
                   transaction.set(userRef, copyData);
                 }

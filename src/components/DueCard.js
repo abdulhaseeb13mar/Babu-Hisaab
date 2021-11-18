@@ -5,13 +5,15 @@ import {Avatar} from 'react-native-paper';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {useSelector} from 'react-redux';
 import {width} from './index';
-import {color} from '../theme';
+import {color, constants} from '../theme';
 
 const DueCard = ({dueInfo, duesOnMe, friendInfo}) => {
   //   console.log(friendInfo);
   const height = useSelector(state => state.HeightReducer);
   const user = useSelector(state => state.userReducer);
   //   const {allUsers} = useSelector(state => state.AppReducer);
+
+  const date = new Date(parseInt(dueInfo.date));
 
   return (
     <TouchableOpacity
@@ -63,7 +65,9 @@ const DueCard = ({dueInfo, duesOnMe, friendInfo}) => {
           </View>
         </View>
         <Text style={{color: color.darkGray, fontSize: 12, fontWeight: 'bold'}}>
-          21 august 2021
+          {`${date.getDate()} ${
+            constants.months[date.getMonth()]
+          } ${date.getFullYear()}`}
         </Text>
         <Text style={{color: 'black', fontSize: 15, marginTop: height * 0.01}}>
           {dueInfo.description}

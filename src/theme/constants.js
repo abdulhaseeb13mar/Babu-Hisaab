@@ -35,6 +35,20 @@ const Constants = {
     SNACKBAR_ERROR: 'SNACKBAR_ERROR',
     SNACKBAR_INFO: 'SNACKBAR_INFO',
   },
+  months: [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ],
 };
 
 export default Constants;

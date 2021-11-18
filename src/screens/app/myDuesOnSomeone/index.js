@@ -74,7 +74,7 @@ const MyDuesOnSomeone = props => {
               />
             )}
             ListEmptyComponent={
-              <Text style={{marginTop: 30, fontSize: 18}}>
+              <Text style={{marginTop: 30, fontSize: 18, color: 'black'}}>
                 You dont have any dues on {friendInfo.name}
               </Text>
             }
