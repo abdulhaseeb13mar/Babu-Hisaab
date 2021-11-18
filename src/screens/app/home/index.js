@@ -38,6 +38,15 @@ const Home = () => {
   };
 
   const GotoAddDues = () => navigation.navigate(appScreens.AddDues);
+  const GoToAllDues = () => navigation.navigate(appScreens.AllDues);
+
+  const GoToDueSelection = selectedUser => {
+    dispatch({
+      type: actionTypes.SET_SELECTED_USER,
+      payload: {selectedUser},
+    });
+    navigation.navigate(appScreens.DueSelection);
+  };
 
   return (
     <WrapperScreen style={{backgroundColor: 'white'}}>
@@ -55,7 +64,6 @@ const Home = () => {
           <View
             style={{
               flex: 1,
-              borderWidth: 1,
               alignItems: 'center',
               justifyContent: 'center',
             }}>
@@ -70,10 +78,16 @@ const Home = () => {
               icon={'plus'}>
               Add Dues
             </Button>
+            <Button
+              mode="contained"
+              onPress={GoToAllDues}
+              style={{marginBottom: height * 0.02}}>
+              All Dues Information
+            </Button>
             <FlatList
               data={allUsers}
               renderItem={({item}) => (
-                <UserTile item={item} onPress={() => {}} />
+                <UserTile item={item} onPress={() => GoToDueSelection(item)} />
               )}
               horizontal={false}
               numColumns={2}

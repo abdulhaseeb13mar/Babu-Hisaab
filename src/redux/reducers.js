@@ -9,6 +9,7 @@ const currentScreen = 'Home';
 const height = InitalHeight;
 const appData = {
   allUsers: [],
+  selectedUser: {},
 };
 
 const userReducer = (state = userInfo, action) => {
@@ -27,6 +28,10 @@ const userReducer = (state = userInfo, action) => {
 const AppReducer = (state = appData, action) => {
   switch (action.type) {
     case actionTypes.SET_ALL_USERS:
+      state = Object.assign({}, state, {...action.payload});
+      return state;
+
+    case actionTypes.SET_SELECTED_USER:
       state = Object.assign({}, state, {...action.payload});
       return state;
 

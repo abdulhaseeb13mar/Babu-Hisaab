@@ -8,7 +8,13 @@ import {constants} from '../../theme';
 
 const Stack = createStackNavigator();
 
-import {Home, AddDues, DueSelection} from '../../screens/app';
+import {
+  Home,
+  AddDues,
+  DueSelection,
+  AllDues,
+  MyDuesOnSomeone,
+} from '../../screens/app';
 
 export default function AppStack() {
   const {appScreens} = constants;
@@ -26,6 +32,11 @@ export default function AppStack() {
       <Stack.Screen name={appScreens.Home} component={Home} />
       <Stack.Screen name={appScreens.AddDues} component={AddDues} />
       <Stack.Screen name={appScreens.DueSelection} component={DueSelection} />
+      <Stack.Screen name={appScreens.AllDues} component={AllDues} />
+      <Stack.Screen
+        name={appScreens.MyDuesOnSomeone}
+        component={MyDuesOnSomeone}
+      />
     </Stack.Navigator>
   );
 }

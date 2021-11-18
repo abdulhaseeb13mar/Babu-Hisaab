@@ -12,6 +12,7 @@ const Constants = {
     SET_CURRENT_SCREEN: 'SET_CURRENT_SCREEN',
     SET_HEIGHT: 'SET_HEIGHT',
     SET_ALL_USERS: 'SET_ALL_USERS',
+    SET_SELECTED_USER: 'SET_SELECTED_USER',
   },
   authScreens: {
     Login: 'Login',
@@ -20,6 +21,8 @@ const Constants = {
     Home: 'Home',
     AddDues: 'AddDues',
     DueSelection: 'DueSelection',
+    AllDues: 'AllDues',
+    MyDuesOnSomeone: 'MyDuesOnSomeone',
   },
   snackbarColors: {
     Success: '#2e7d32',
