@@ -15,6 +15,7 @@ const MyDuesOnSomeone = props => {
   const height = useSelector(state => state.HeightReducer);
   const [totalDue, setTotalDue] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [selectedCards, setSelectedCards] = useState({});
 
   const friendInfo = props.route.params;
   const {collections} = constants;
@@ -46,6 +47,23 @@ const MyDuesOnSomeone = props => {
     setLoading(false);
   };
 
+  const handleOnPress = (dueInfo, pressType) => {
+    if (
+      pressType === 'singlePress' &&
+      Object.keys(selectedCards).length === 0
+    ) {
+      return;
+    } else {
+      let copy = selectedCards[dueInfo.index];
+      if (selectedCards[dueInfo.index]) {
+        delete copy[dueInfo.index];
+      } else {
+        copy[dueInfo.index] = dueInfo;
+      }
+      setSelectedCards(copy);
+    }
+  };
+
   return (
     <WrapperScreen>
       <View style={{flex: 1}}>
@@ -73,11 +91,15 @@ const MyDuesOnSomeone = props => {
             data={duesList}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{alignItems: 'center'}}
-            renderItem={({item}) => (
+            renderItem={({item, index}) => (
               <DueCard
+                index={index}
                 dueInfo={item}
                 duesOnMe={false}
                 friendInfo={friendInfo}
+                onPress={handleOnPress}
+                onLongPress={handleOnPress}
+                isSelected={selectedCards[index] ? true : false}
               />
             )}
             ListEmptyComponent={

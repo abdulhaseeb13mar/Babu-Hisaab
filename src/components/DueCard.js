@@ -7,8 +7,15 @@ import {useSelector} from 'react-redux';
 import {width} from './index';
 import {color, constants} from '../theme';
 
-const DueCard = ({dueInfo, duesOnMe, friendInfo}) => {
-  //   console.log(friendInfo);
+const DueCard = ({
+  dueInfo,
+  duesOnMe,
+  friendInfo,
+  onPress = () => {},
+  onLongPress = () => {},
+  index,
+  isSelected = false,
+}) => {
   const height = useSelector(state => state.HeightReducer);
   const user = useSelector(state => state.userReducer);
   //   const {allUsers} = useSelector(state => state.AppReducer);
@@ -17,6 +24,10 @@ const DueCard = ({dueInfo, duesOnMe, friendInfo}) => {
 
   return (
     <TouchableOpacity
+      onPress={() => onPress({...dueInfo, index}, 'singlePress')}
+      onLongPress={() => onLongPress({...dueInfo, index}, 'longPress')}
+      delayLongPress={200}
+      activeOpacity={0.9}
       style={{
         width: '95%',
         flexDirection: 'row',
@@ -26,8 +37,10 @@ const DueCard = ({dueInfo, duesOnMe, friendInfo}) => {
         borderRadius: 15,
         paddingHorizontal: width * 0.03,
         paddingVertical: height * 0.015,
-        elevation: 4,
+        elevation: 3,
         marginVertical: height * 0.02,
+        borderWidth: 2.5,
+        borderColor: isSelected ? 'green' : 'transparent',
       }}>
       <View style={{flex: 1, borderColor: 'red'}}>
         <View
