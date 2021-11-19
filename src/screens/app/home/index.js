@@ -78,12 +78,12 @@ const Home = () => {
               icon={'plus'}>
               Add Dues
             </Button>
-            <Button
+            {/* <Button
               mode="contained"
               onPress={GoToAllDues}
               style={{marginBottom: height * 0.02}}>
               All Dues Information
-            </Button>
+            </Button> */}
             <FlatList
               data={allUsers}
               renderItem={({item}) => (

@@ -2,15 +2,18 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, FlatList, ActivityIndicator} from 'react-native';
 import {WrapperScreen, width, DueCard} from '../../../components';
 import {useNavigation} from '@react-navigation/core';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import constants from '../../../theme/constants';
 import firestore from '@react-native-firebase/firestore';
+import {Button} from 'react-native-paper';
 
 const SomeoneDueOnMe = props => {
   useEffect(() => {
     fetchThisPersonDuesOnMe();
   }, []);
   const user = useSelector(state => state.userReducer);
+  const height = useSelector(state => state.HeightReducer);
+  const [totalDue, setTotalDue] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const friendInfo = props.route.params;
@@ -32,7 +35,11 @@ const SomeoneDueOnMe = props => {
         if (!response[friendInfo.id]) {
           return setDuesList([]);
         } else {
-          console.log(response[friendInfo.id]);
+          let total = 0;
+          response[friendInfo.id].map(
+            due => (total = total + parseInt(due.amount)),
+          );
+          setTotalDue(total);
           return setDuesList([...response[friendInfo.id]]);
         }
       });
@@ -81,6 +88,42 @@ const SomeoneDueOnMe = props => {
             }
           />
         )}
+      </View>
+      <View
+        style={{
+          borderWidth: 1.5,
+          backgroundColor: 'white',
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
+          paddingHorizontal: width * 0.05,
+          paddingVertical: height * 0.02,
+          elevation: 5,
+          borderColor: '#bcbcbc',
+        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <Text
+            style={{
+              color: 'black',
+              fontSize: 18,
+              fontWeight: 'bold',
+              opacity: 0.5,
+            }}>
+            TOTAL
+          </Text>
+          <Text style={{color: 'black', fontSize: 26, fontWeight: 'bold'}}>
+            {totalDue}
+          </Text>
+        </View>
+        <Button
+          mode="contained"
+          style={{borderRadius: 10, marginTop: height * 0.02}}>
+          Send to Paid
+        </Button>
       </View>
     </WrapperScreen>
   );

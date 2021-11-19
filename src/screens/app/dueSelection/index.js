@@ -72,6 +72,7 @@ const DueDirectionCard = ({height, user, selectedUser, duesOnMe, onPress}) => {
           name={`arrow-circle-right`}
           size={(width / height) * 100}
           style={{marginHorizontal: width * 0.06}}
+          color="blue"
         />
         <Avatar.Image
           source={{uri: duesOnMe ? selectedUser.photo : user.photo}}
