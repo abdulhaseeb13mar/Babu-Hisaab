@@ -8,7 +8,7 @@ import {Button} from 'react-native-paper';
 
 const MyDuesOnSomeone = props => {
   useEffect(() => {
-    fetchThisPersonDuesOnMe();
+    fetchMyDuesOnThisPerson();
   }, []);
   const user = useSelector(state => state.userReducer);
   const height = useSelector(state => state.HeightReducer);
@@ -26,7 +26,7 @@ const MyDuesOnSomeone = props => {
     .collection(collections.DUES_ON_OTHER)
     .doc(user.id);
 
-  const fetchThisPersonDuesOnMe = async () => {
+  const fetchMyDuesOnThisPerson = async () => {
     setLoading(true);
     await duesOnOtherRef.get().then(snapshot => {
       let total = 0;
@@ -88,7 +88,7 @@ const MyDuesOnSomeone = props => {
         })
         .then(() => {
           setBtnLoading(false);
-          fetchThisPersonDuesOnMe();
+          fetchMyDuesOnThisPerson();
         });
     });
   };

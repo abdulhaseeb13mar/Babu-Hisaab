@@ -6,6 +6,7 @@ const Constants = {
     USERS_INFO: 'USERS_INFO',
     DUES_ON_OTHER: 'DUES_ON_OTHER',
     DUES_ON_ME: 'DUES_ON_ME',
+    DUES_TO_BE_CLEAR: 'DUES_TO_BE_CLEAR',
   },
   actionTypes: {
     SET_USER_INFO: 'SET_USER_INFO',
