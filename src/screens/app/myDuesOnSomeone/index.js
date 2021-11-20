@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, FlatList, ActivityIndicator} from 'react-native';
 import {WrapperScreen, width, DueCard} from '../../../components';
-import {useNavigation} from '@react-navigation/core';
 import {useSelector} from 'react-redux';
 import constants from '../../../theme/constants';
 import firestore from '@react-native-firebase/firestore';
@@ -15,6 +14,7 @@ const MyDuesOnSomeone = props => {
   const height = useSelector(state => state.HeightReducer);
   const [totalDue, setTotalDue] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
   const [selectedCards, setSelectedCards] = useState({});
 
   const friendInfo = props.route.params;
@@ -22,28 +22,30 @@ const MyDuesOnSomeone = props => {
 
   const [duesList, setDuesList] = useState([]);
 
+  const duesOnOtherRef = firestore()
+    .collection(collections.DUES_ON_OTHER)
+    .doc(user.id);
+
   const fetchThisPersonDuesOnMe = async () => {
     setLoading(true);
-    await firestore()
-      .collection(collections.DUES_ON_OTHER)
-      .doc(user.id)
-      .get()
-      .then(snapshot => {
-        if (!snapshot.exists) {
-          return setDuesList([]);
-        }
-        const response = snapshot.data();
-        if (!response[friendInfo.id]) {
-          return setDuesList([]);
-        } else {
-          let total = 0;
-          response[friendInfo.id].map(
-            due => (total = total + parseInt(due.amount)),
-          );
-          setTotalDue(total);
-          return setDuesList([...response[friendInfo.id]]);
-        }
-      });
+    await duesOnOtherRef.get().then(snapshot => {
+      let total = 0;
+      if (!snapshot.exists) {
+        setTotalDue(total);
+        return setDuesList([]);
+      }
+      const response = snapshot.data();
+      if (!response[friendInfo.id]) {
+        setTotalDue(total);
+        return setDuesList([]);
+      } else {
+        response[friendInfo.id].map(
+          due => (total = total + parseInt(due.amount)),
+        );
+        setTotalDue(total);
+        return setDuesList([...response[friendInfo.id]]);
+      }
+    });
     setLoading(false);
   };
 
@@ -54,7 +56,7 @@ const MyDuesOnSomeone = props => {
     ) {
       return;
     } else {
-      let copy = selectedCards[dueInfo.index];
+      let copy = {...selectedCards};
       if (selectedCards[dueInfo.index]) {
         delete copy[dueInfo.index];
       } else {
@@ -62,6 +64,33 @@ const MyDuesOnSomeone = props => {
       }
       setSelectedCards(copy);
     }
+  };
+
+  const removeDues = async () => {
+    setBtnLoading(true);
+    await duesOnOtherRef.get().then(async snapshot => {
+      const myDuesOnThisFriend = snapshot.data()[friendInfo.id];
+      const selectedDuesArray = Object.values(selectedCards);
+      const filteredDues = myDuesOnThisFriend.filter(due => {
+        for (let i = 0; i < selectedDuesArray.length; i++) {
+          if (selectedDuesArray[i].date === due.date) {
+            return false;
+          }
+        }
+        return true;
+      });
+      await duesOnOtherRef
+        .update({
+          [friendInfo.id]:
+            filteredDues.length > 0
+              ? filteredDues
+              : firestore.FieldValue.delete(),
+        })
+        .then(() => {
+          setBtnLoading(false);
+          fetchThisPersonDuesOnMe();
+        });
+    });
   };
 
   return (
@@ -142,13 +171,15 @@ const MyDuesOnSomeone = props => {
         </View>
         <Button
           mode="contained"
-          disabled
+          onPress={removeDues}
+          loading={btnLoading}
+          disabled={Object.keys(selectedCards).length === 0 || btnLoading}
           style={{
             borderRadius: 10,
             marginTop: height * 0.02,
           }}
           labelStyle={{fontWeight: 'bold'}}>
-          Remove Due
+          {btnLoading ? '' : 'Remove Due'}
         </Button>
       </View>
     </WrapperScreen>
