@@ -15,10 +15,46 @@ const Home = () => {
 
   const height = useSelector(state => state.HeightReducer);
   const user = useSelector(state => state.userReducer);
-  const {allUsers} = useSelector(state => state.AppReducer);
+  const {allUsers, duesToBeClearLength} = useSelector(
+    state => state.AppReducer,
+  );
+
+  const duesToClearRef = firestore()
+    .collection(collections.DUES_TO_BE_CLEAR)
+    .doc(user.id);
 
   useEffect(() => {
     getUsers();
+    const subscriber = duesToClearRef.onSnapshot(snapshot => {
+      console.log('snapshot', snapshot.data());
+      let pendingDuesLength = 0;
+      if (snapshot.exists) {
+        Object.values(snapshot.data()).map(arr => {
+          pendingDuesLength = arr.length + pendingDuesLength;
+        });
+        console.log(pendingDuesLength, Object.values(snapshot.data()));
+        dispatch({
+          type: actionTypes.SET_DUES_TO_BE_CLEAR,
+          payload: {
+            duesToBeClear: snapshot.data(),
+          },
+        });
+      } else {
+        dispatch({
+          type: actionTypes.SET_DUES_TO_BE_CLEAR,
+          payload: {
+            duesToBeClear: {},
+          },
+        });
+      }
+      dispatch({
+        type: actionTypes.SET_DUES_TO_BE_CLEAR_LENGTH,
+        payload: {
+          duesToBeClearLength: pendingDuesLength,
+        },
+      });
+    });
+    return () => subscriber();
   }, []);
 
   const getUsers = async () => {
@@ -39,6 +75,7 @@ const Home = () => {
 
   const GotoAddDues = () => navigation.navigate(appScreens.AddDues);
   const GoToAllDues = () => navigation.navigate(appScreens.AllDues);
+  const GoToConfirmDues = () => navigation.navigate(appScreens.confirmDuesPaid);
 
   const GoToDueSelection = selectedUser => {
     dispatch({
@@ -84,6 +121,13 @@ const Home = () => {
               style={{marginBottom: height * 0.02}}>
               All Dues Information
             </Button> */}
+            <Button
+              mode="contained"
+              onPress={GoToConfirmDues}
+              style={{marginVertical: height * 0.03}}
+              icon={'plus'}>
+              Confirm Dues ( {duesToBeClearLength} )
+            </Button>
             <FlatList
               data={allUsers}
               renderItem={({item}) => (

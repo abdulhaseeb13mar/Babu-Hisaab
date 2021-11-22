@@ -14,6 +14,8 @@ const Constants = {
     SET_HEIGHT: 'SET_HEIGHT',
     SET_ALL_USERS: 'SET_ALL_USERS',
     SET_SELECTED_USER: 'SET_SELECTED_USER',
+    SET_DUES_TO_BE_CLEAR: 'SET_DUES_TO_BE_CLEAR',
+    SET_DUES_TO_BE_CLEAR_LENGTH: 'SET_DUES_TO_BE_CLEAR_LENGTH',
   },
   authScreens: {
     Login: 'Login',
@@ -25,6 +27,7 @@ const Constants = {
     AllDues: 'AllDues',
     MyDuesOnSomeone: 'MyDuesOnSomeone',
     SomeoneDuesOnMe: 'SomeoneDuesOnMe',
+    confirmDuesPaid: 'confirmDuesPaid',
   },
   snackbarColors: {
     Success: '#2e7d32',

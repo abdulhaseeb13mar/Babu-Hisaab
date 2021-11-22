@@ -10,6 +10,8 @@ const height = InitalHeight;
 const appData = {
   allUsers: [],
   selectedUser: {},
+  duesToBeClear: {},
+  duesToBeClearLength: 0,
 };
 
 const userReducer = (state = userInfo, action) => {
@@ -33,6 +35,18 @@ const AppReducer = (state = appData, action) => {
 
     case actionTypes.SET_SELECTED_USER:
       state = Object.assign({}, state, {...action.payload});
+      return state;
+
+    case actionTypes.SET_DUES_TO_BE_CLEAR:
+      state = Object.assign({}, state, {
+        ...action.payload,
+      });
+      return state;
+
+    case actionTypes.SET_DUES_TO_BE_CLEAR_LENGTH:
+      state = Object.assign({}, state, {
+        ...action.payload,
+      });
       return state;
 
     default:

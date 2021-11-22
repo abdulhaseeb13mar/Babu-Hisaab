@@ -26,7 +26,7 @@ const SomeoneDueOnMe = props => {
 
   const duesToBeClearRef = firestore()
     .collection(collections.DUES_TO_BE_CLEAR)
-    .doc(user.id);
+    .doc(friendInfo.id);
 
   const friendDuesOnMeRef = firestore()
     .collection(collections.DUES_ON_ME)
@@ -91,17 +91,17 @@ const SomeoneDueOnMe = props => {
         };
         if (!snapshot.exists) {
           return await duesToBeClearRef.set({
-            [friendInfo.id]: [dataToAdd],
+            [user.id]: [dataToAdd],
           });
         } else {
           const data = snapshot.data();
-          if (!data[friendInfo.id]) {
+          if (!data[user.id]) {
             return await duesToBeClearRef.update({
-              [friendInfo.id]: [dataToAdd],
+              [user.id]: [dataToAdd],
             });
           } else {
             return await duesToBeClearRef.update({
-              [friendInfo.id]: firestore.FieldValue.arrayUnion(dataToAdd),
+              [user.id]: firestore.FieldValue.arrayUnion(dataToAdd),
             });
           }
         }
