@@ -26,6 +26,10 @@ const MyDuesOnSomeone = props => {
     .collection(collections.DUES_ON_OTHER)
     .doc(user.id);
 
+  const duesOnMeRef = firestore()
+    .collection(collections.DUES_ON_ME)
+    .doc(friendInfo.id);
+
   const fetchMyDuesOnThisPerson = async () => {
     setLoading(true);
     await duesOnOtherRef.get().then(snapshot => {
@@ -68,29 +72,40 @@ const MyDuesOnSomeone = props => {
 
   const removeDues = async () => {
     setBtnLoading(true);
-    await duesOnOtherRef.get().then(async snapshot => {
-      const myDuesOnThisFriend = snapshot.data()[friendInfo.id];
-      const selectedDuesArray = Object.values(selectedCards);
-      const filteredDues = myDuesOnThisFriend.filter(due => {
-        for (let i = 0; i < selectedDuesArray.length; i++) {
-          if (selectedDuesArray[i].date === due.date) {
-            return false;
-          }
-        }
-        return true;
-      });
-      await duesOnOtherRef
-        .update({
-          [friendInfo.id]:
-            filteredDues.length > 0
-              ? filteredDues
-              : firestore.FieldValue.delete(),
-        })
-        .then(() => {
-          setBtnLoading(false);
-          fetchMyDuesOnThisPerson();
+    const selectedDuesArray = [...Object.values(selectedCards)];
+    await firestore()
+      .runTransaction(transaction => {
+        return transaction.get(duesOnOtherRef).then(async snapshot => {
+          const myDuesOnThisFriend = snapshot.data()[friendInfo.id];
+          const filteredDues = myDuesOnThisFriend.filter(due => {
+            for (let i = 0; i < selectedDuesArray.length; i++) {
+              if (selectedDuesArray[i].date === due.date) {
+                return false;
+              }
+            }
+            return true;
+          });
+          await transaction.update(duesOnOtherRef, {
+            [friendInfo.id]:
+              filteredDues.length > 0
+                ? filteredDues
+                : firestore.FieldValue.delete(),
+          });
+
+          await transaction.update(duesOnMeRef, {
+            [user.id]:
+              filteredDues.length > 0
+                ? filteredDues
+                : firestore.FieldValue.delete(),
+          });
         });
-    });
+      })
+      .then(() => {
+        setSelectedCards({});
+        setBtnLoading(false);
+        fetchMyDuesOnThisPerson();
+      })
+      .catch(e => console.log(e));
   };
 
   return (

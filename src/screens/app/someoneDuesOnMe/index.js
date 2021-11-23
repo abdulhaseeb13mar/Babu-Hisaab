@@ -32,6 +32,10 @@ const SomeoneDueOnMe = props => {
     .collection(collections.DUES_ON_ME)
     .doc(user.id);
 
+  const myDuesOnFriendRef = firestore()
+    .collection(collections.DUES_ON_OTHER)
+    .doc(friendInfo.id);
+
   const fetchThisPersonDuesOnMe = async () => {
     setLoading(true);
     let total = 0;
@@ -107,29 +111,37 @@ const SomeoneDueOnMe = props => {
         }
       })
       .then(async () => {
-        await friendDuesOnMeRef.get().then(async snapshot => {
-          const friendDuesOnMe = snapshot.data()[friendInfo.id];
-          const filteredDues = friendDuesOnMe.filter(due => {
-            for (let i = 0; i < selectedDuesArray.length; i++) {
-              if (selectedDuesArray[i].date === due.date) {
-                return false;
+        return await firestore().runTransaction(transaction => {
+          return transaction.get(friendDuesOnMeRef).then(async snapshot => {
+            const friendDuesOnMe = snapshot.data()[friendInfo.id];
+            const filteredDues = friendDuesOnMe.filter(due => {
+              for (let i = 0; i < selectedDuesArray.length; i++) {
+                if (selectedDuesArray[i].date === due.date) {
+                  return false;
+                }
               }
-            }
-            return true;
-          });
-          await friendDuesOnMeRef
-            .update({
+              return true;
+            });
+            await transaction.update(friendDuesOnMeRef, {
               [friendInfo.id]:
                 filteredDues.length > 0
                   ? filteredDues
                   : firestore.FieldValue.delete(),
-            })
-            .then(() => {
-              setSelectedCards({});
-              setSelectedTotal(0);
-              fetchThisPersonDuesOnMe();
             });
+
+            await transaction.update(myDuesOnFriendRef, {
+              [user.id]:
+                filteredDues.length > 0
+                  ? filteredDues
+                  : firestore.FieldValue.delete(),
+            });
+          });
         });
+      })
+      .then(() => {
+        setSelectedCards({});
+        setSelectedTotal(0);
+        fetchThisPersonDuesOnMe();
       })
       .catch(e => console.log(e));
     setBtnLoading(false);
