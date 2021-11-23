@@ -28,6 +28,7 @@ const Constants = {
     MyDuesOnSomeone: 'MyDuesOnSomeone',
     SomeoneDuesOnMe: 'SomeoneDuesOnMe',
     confirmDuesPaid: 'confirmDuesPaid',
+    PaybackDetails: 'PaybackDetails',
   },
   snackbarColors: {
     Success: '#2e7d32',

@@ -1,16 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Text, View, FlatList} from 'react-native';
 import {WrapperScreen, width, DuesPaidCard} from '../../../components';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/core';
+import constants from '../../../theme/constants';
 
 const ConfirmDuesPaid = () => {
-  const height = useSelector(state => state.HeightReducer);
-  const user = useSelector(state => state.userReducer);
-  const {allUsers, duesToBeClearLength, duesToBeClear} = useSelector(
-    state => state.AppReducer,
-  );
-
-  console.log('ALL USERSSSS', allUsers);
+  const navigation = useNavigation();
+  const {duesToBeClear} = useSelector(state => state.AppReducer);
 
   const [sortedList, setSortedList] = useState([]);
 
@@ -27,8 +24,11 @@ const ConfirmDuesPaid = () => {
     );
     AllDues.sort((a, b) => parseInt(a.date) - parseInt(b.date));
     setSortedList([...AllDues]);
-    console.log('all dues===>', AllDues);
   };
+
+  useEffect(() => {
+    setDuesPaidInOrder();
+  }, [duesToBeClear]);
 
   return (
     <WrapperScreen>
@@ -44,7 +44,17 @@ const ConfirmDuesPaid = () => {
       {sortedList.length > 0 && (
         <FlatList
           data={sortedList}
-          renderItem={({item}) => <DuesPaidCard info={item} />}
+          renderItem={({item}) => (
+            <DuesPaidCard
+              info={item}
+              onPress={friendInfo =>
+                navigation.navigate(constants.appScreens.PaybackDetails, {
+                  friendInfo,
+                  paybackInfo: {...item},
+                })
+              }
+            />
+          )}
         />
       )}
     </WrapperScreen>

@@ -5,6 +5,7 @@ import AllDues from './allDues';
 import MyDuesOnSomeone from './myDuesOnSomeone';
 import SomeoneDuesOnMe from './someoneDuesOnMe';
 import ConfirmDuesPaid from './confirmDuesPaid';
+import PaybackDetails from './paybackDetails';
 
 export {
   Home,
@@ -14,4 +15,5 @@ export {
   MyDuesOnSomeone,
   SomeoneDuesOnMe,
   ConfirmDuesPaid,
+  PaybackDetails,
 };

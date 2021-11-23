@@ -1,11 +1,11 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import {width} from './index';
 import {useSelector} from 'react-redux';
 import constants from '../theme/constants';
 
-const DuesPaidCard = ({info}) => {
+const DuesPaidCard = ({info, onPress = () => {}}) => {
   const {allUsers} = useSelector(state => state.AppReducer);
   const height = useSelector(state => state.HeightReducer);
   const friendInfo = allUsers.filter(
@@ -14,7 +14,9 @@ const DuesPaidCard = ({info}) => {
   const date = new Date(parseInt(info.date));
 
   return (
-    <View
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={() => onPress(friendInfo)}
       style={{
         flexDirection: 'row',
         alignItems: 'center',
@@ -56,7 +58,7 @@ const DuesPaidCard = ({info}) => {
           tap to see details and confirm
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
