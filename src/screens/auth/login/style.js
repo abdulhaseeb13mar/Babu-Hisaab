@@ -8,7 +8,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   input: {
-    height: 40,
     borderWidth: 1,
     width: width * 0.7,
     color: 'black',

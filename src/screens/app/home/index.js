@@ -1,12 +1,19 @@
 import React, {useEffect} from 'react';
-import {View, Text, ActivityIndicator, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import constants from '../../../theme/constants';
 import firestore from '@react-native-firebase/firestore';
-import {WrapperScreen, UserTile} from '../../../components';
+import {WrapperScreen, UserTile, width} from '../../../components';
 import styles from './style';
 import {useDispatch, useSelector} from 'react-redux';
-import {Button} from 'react-native-paper';
+import {Button, Avatar} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/core';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -74,8 +81,9 @@ const Home = () => {
   };
 
   const GotoAddDues = () => navigation.navigate(appScreens.AddDues);
-  const GoToAllDues = () => navigation.navigate(appScreens.AllDues);
   const GoToConfirmDues = () => navigation.navigate(appScreens.confirmDuesPaid);
+  const GoToProfileSettings = () =>
+    navigation.navigate(appScreens.ProfileSettings);
 
   const GoToDueSelection = selectedUser => {
     dispatch({
@@ -88,15 +96,49 @@ const Home = () => {
   return (
     <WrapperScreen style={{backgroundColor: 'white'}}>
       <View style={{flex: 1}}>
-        <Text
+        <View
           style={{
-            color: 'black',
-            textAlign: 'center',
-            fontSize: 30,
-            fontWeight: 'bold',
+            marginTop: height * 0.015,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingHorizontal: width * 0.05,
           }}>
-          BABUSOFTIANS
-        </Text>
+          <TouchableOpacity onPress={GoToConfirmDues} activeOpacity={0.9}>
+            {duesToBeClearLength > 0 && (
+              <Avatar.Text
+                label={duesToBeClearLength}
+                color="white"
+                style={{
+                  backgroundColor: 'red',
+                  elevation: 3,
+                  position: 'absolute',
+                  right: 0,
+                }}
+                size={17}
+              />
+            )}
+            <Ionicons name="notifications-outline" size={35} color="black" />
+          </TouchableOpacity>
+          <Text
+            style={{
+              color: 'green',
+              textAlign: 'center',
+              fontSize: 25,
+              fontWeight: 'bold',
+              fontStyle: 'italic',
+            }}>
+            <Text style={{fontStyle: 'normal', color: 'black'}}>BABU</Text>{' '}
+            HISAAB
+          </Text>
+          <TouchableOpacity onPress={GoToProfileSettings} activeOpacity={0.9}>
+            <Avatar.Image
+              source={{uri: user.photo}}
+              size={40}
+              style={{elevation: 3}}
+            />
+          </TouchableOpacity>
+        </View>
         {allUsers.length === 0 ? (
           <View
             style={{
@@ -108,26 +150,32 @@ const Home = () => {
           </View>
         ) : (
           <View style={styles(height).listContainer}>
-            <Button
+            {/* <Button
               mode="contained"
               onPress={GotoAddDues}
               style={{marginVertical: height * 0.03}}
               icon={'plus'}>
               Add Dues
-            </Button>
-            {/* <Button
-              mode="contained"
-              onPress={GoToAllDues}
-              style={{marginBottom: height * 0.02}}>
-              All Dues Information
             </Button> */}
-            <Button
-              mode="contained"
-              onPress={GoToConfirmDues}
-              style={{marginVertical: height * 0.03}}
-              icon={'plus'}>
-              Confirm Dues ( {duesToBeClearLength} )
-            </Button>
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={GotoAddDues}
+              style={{
+                alignSelf: 'flex-start',
+                marginTop: height * 0.02,
+                marginBottom: height * 0.03,
+                paddingLeft: width * 0.05,
+                paddingRight: width * 0.05,
+                borderTopRightRadius: 30,
+                borderBottomRightRadius: 30,
+                paddingVertical: height * 0.01,
+                elevation: 5,
+                backgroundColor: 'green',
+              }}>
+              <Text style={{fontSize: 20, fontWeight: 'bold', color: 'white'}}>
+                Add Dues
+              </Text>
+            </TouchableOpacity>
             <FlatList
               data={allUsers}
               renderItem={({item}) => (

@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, FlatList} from 'react-native';
-import {WrapperScreen, width, DuesPaidCard} from '../../../components';
+import {Text, FlatList} from 'react-native';
+import {WrapperScreen, DuesPaidCard} from '../../../components';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/core';
 import constants from '../../../theme/constants';
+import Header from '../../../components/Header';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {color} from '../../../theme';
 
 const ConfirmDuesPaid = () => {
   const navigation = useNavigation();
@@ -32,16 +35,13 @@ const ConfirmDuesPaid = () => {
 
   return (
     <WrapperScreen>
-      <Text
-        style={{
-          color: 'black',
-          fontSize: 25,
-          fontWeight: 'bold',
-          textAlign: 'center',
-        }}>
-        CONFIRM DUES PAID
-      </Text>
-      {sortedList.length > 0 && (
+      <Header
+        Title="Confirm Dues Paid"
+        leftIconName="arrow-left"
+        leftIcon={FontAwesome5}
+        leftIconAction={() => navigation.goBack()}
+      />
+      {sortedList.length > 0 ? (
         <FlatList
           data={sortedList}
           renderItem={({item}) => (
@@ -55,7 +55,31 @@ const ConfirmDuesPaid = () => {
               }
             />
           )}
+          ListEmptyComponent={
+            <Text
+              style={{
+                marginTop: 30,
+                fontSize: 18,
+                color: color.lightGrey3,
+                fontWeight: 'bold',
+                textAlign: 'center',
+                borderWidth: 1,
+              }}>
+              hasd
+            </Text>
+          }
         />
+      ) : (
+        <Text
+          style={{
+            marginTop: 30,
+            fontSize: 18,
+            color: color.lightGrey3,
+            fontWeight: 'bold',
+            textAlign: 'center',
+          }}>
+          You do not have any{'\n'}dues to confirm
+        </Text>
       )}
     </WrapperScreen>
   );

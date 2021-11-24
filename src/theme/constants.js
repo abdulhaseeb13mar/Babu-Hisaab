@@ -29,6 +29,8 @@ const Constants = {
     SomeoneDuesOnMe: 'SomeoneDuesOnMe',
     confirmDuesPaid: 'confirmDuesPaid',
     PaybackDetails: 'PaybackDetails',
+    ProfileSettings: 'ProfileSettings',
+    ChangePassword: 'ChangePassword',
   },
   snackbarColors: {
     Success: '#2e7d32',

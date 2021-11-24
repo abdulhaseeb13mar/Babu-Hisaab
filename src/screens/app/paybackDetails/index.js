@@ -8,6 +8,8 @@ import {Button} from 'react-native-paper';
 import constants from '../../../theme/constants';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/core';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Header from '../../../components/Header';
 
 const PayBackDetails = props => {
   const height = useSelector(state => state.HeightReducer);
@@ -155,16 +157,12 @@ const PayBackDetails = props => {
 
   return (
     <WrapperScreen>
-      <Text
-        style={{
-          color: 'black',
-          textAlign: 'center',
-          fontSize: 20,
-          fontWeight: 'bold',
-          marginTop: height * 0.02,
-        }}>
-        Payback Details
-      </Text>
+      <Header
+        Title={`Payback Details`}
+        leftIconName="arrow-left"
+        leftIcon={FontAwesome5}
+        leftIconAction={() => navigation.goBack()}
+      />
       <Text
         style={{
           textAlign: 'center',

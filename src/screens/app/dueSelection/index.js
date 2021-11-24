@@ -2,10 +2,11 @@ import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import {WrapperScreen, width} from '../../../components';
 import {useNavigation} from '@react-navigation/core';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import constants from '../../../theme/constants';
 import {Avatar} from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Header from '../../../components/Header';
 
 const DueSelection = () => {
   const navigation = useNavigation();
@@ -14,6 +15,12 @@ const DueSelection = () => {
   const user = useSelector(state => state.userReducer);
   return (
     <WrapperScreen>
+      <Header
+        Title="Due Selection"
+        leftIconName="arrow-left"
+        leftIcon={FontAwesome5}
+        leftIconAction={() => navigation.goBack()}
+      />
       <View
         style={{
           flex: 1,
@@ -72,7 +79,7 @@ const DueDirectionCard = ({height, user, selectedUser, duesOnMe, onPress}) => {
           name={`arrow-circle-right`}
           size={(width / height) * 100}
           style={{marginHorizontal: width * 0.06}}
-          color="blue"
+          color="green"
         />
         <Avatar.Image
           source={{uri: duesOnMe ? selectedUser.photo : user.photo}}

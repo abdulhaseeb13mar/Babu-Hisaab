@@ -1,6 +1,5 @@
 import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
-import firestore from '@react-native-firebase/firestore';
 import {Avatar} from 'react-native-paper';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {useSelector} from 'react-redux';
@@ -18,7 +17,6 @@ const DueCard = ({
 }) => {
   const height = useSelector(state => state.HeightReducer);
   const user = useSelector(state => state.userReducer);
-  //   const {allUsers} = useSelector(state => state.AppReducer);
 
   const date = new Date(parseInt(dueInfo.date));
 
@@ -68,7 +66,7 @@ const DueCard = ({
               name={`arrow-circle-right`}
               size={(width / height) * 30}
               style={{marginHorizontal: width * 0.02}}
-              color={color.lightGrey3}
+              color={'green'}
             />
             <Avatar.Image
               source={{uri: duesOnMe ? user.photo : friendInfo.photo}}

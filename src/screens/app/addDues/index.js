@@ -9,11 +9,15 @@ import {color, constants} from '../../../theme';
 import {width} from '../../../components/Responsive';
 import firestore from '@react-native-firebase/firestore';
 import {DuesAdded} from '../../../components/modals';
+import Header from '../../../components/Header';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const AddDues = () => {
   const height = useSelector(state => state.HeightReducer);
   const {allUsers} = useSelector(state => state.AppReducer);
   const user = useSelector(state => state.userReducer);
+
+  const navigation = useNavigation();
 
   const {collections} = constants;
 
@@ -123,90 +127,101 @@ const AddDues = () => {
   };
 
   return (
-    <WrapperScreen style={{marginHorizontal: width * 0.05}}>
-      <Text
+    <WrapperScreen>
+      <Header
+        Title="Add Dues"
+        leftIconName="arrow-left"
+        leftIcon={FontAwesome5}
+        leftIconAction={() => navigation.goBack()}
+      />
+      <View
         style={{
-          textAlign: 'center',
-          fontSize: 25,
-          fontWeight: 'bold',
-          marginTop: height * 0.02,
+          marginHorizontal: width * 0,
+          flex: 1,
+          justifyContent: 'space-between',
         }}>
-        ADD DUES
-      </Text>
-      <TextInput
-        placeholder="Enter Amount"
-        style={{
-          borderRadius: 10,
-          borderWidth: 1,
-          borderColor: color.lightGrey1,
-          backgroundColor: 'white',
-          elevation: 3,
-          fontSize: 20,
-          color: 'black',
-          fontWeight: 'bold',
-          paddingHorizontal: width * 0.04,
-          marginTop: height * 0.05,
-        }}
-        keyboardType="decimal-pad"
-        placeholderTextColor={color.lightGrey3}
-        onChangeText={t => setAmount(t)}
-        value={amount}
-      />
-      <TextInput
-        placeholder="Enter Description"
-        style={{
-          borderRadius: 10,
-          borderWidth: 1,
-          borderColor: color.lightGrey1,
-          backgroundColor: 'white',
-          elevation: 3,
-          fontSize: 20,
-          color: 'black',
-          paddingHorizontal: width * 0.04,
-          marginVertical: height * 0.03,
-        }}
-        placeholderTextColor={color.lightGrey3}
-        onChangeText={t => setDescription(t)}
-        value={description}
-      />
-      <View style={styles(height).listContainer}>
-        <FlatList
-          data={allUsers}
-          showsVerticalScrollIndicator={false}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              style={{width: '50%', borderWidth: 0}}
-              onPress={() => handleCardPress(item)}>
-              <UserTile
-                item={item}
-                onPress={() => handleCardPress(item)}
-                style={{width: '100%'}}
-                imageStyle={{
-                  borderWidth: selectedUsers[item.id] ? 2 : 0,
-                  borderColor: 'green',
-                }}
-                isSelected={selectedUsers[item.id] ? true : false}
-              />
-            </TouchableOpacity>
-          )}
-          horizontal={false}
-          numColumns={2}
-          style={styles(height).flatlistStyle}
-          contentContainerStyle={{paddingTop: height * 0.015}}
-        />
+        <View>
+          <TextInput
+            placeholder="Enter Amount"
+            style={{
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: color.lightGrey1,
+              backgroundColor: 'white',
+              elevation: 3,
+              fontSize: 20,
+              color: 'black',
+              fontWeight: 'bold',
+              paddingHorizontal: width * 0.04,
+              marginTop: height * 0.05,
+              marginHorizontal: width * 0.05,
+            }}
+            keyboardType="decimal-pad"
+            placeholderTextColor={color.lightGrey3}
+            onChangeText={t => setAmount(t)}
+            value={amount}
+          />
+          <TextInput
+            placeholder="Enter Description"
+            style={{
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: color.lightGrey1,
+              backgroundColor: 'white',
+              elevation: 3,
+              fontSize: 20,
+              color: 'black',
+              paddingHorizontal: width * 0.04,
+              marginVertical: height * 0.03,
+              marginHorizontal: width * 0.05,
+            }}
+            placeholderTextColor={color.lightGrey3}
+            onChangeText={t => setDescription(t)}
+            value={description}
+          />
+          <View style={styles(height).listContainer}>
+            <FlatList
+              data={allUsers}
+              showsVerticalScrollIndicator={false}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={{width: '50%', borderWidth: 0}}
+                  onPress={() => handleCardPress(item)}>
+                  <UserTile
+                    item={item}
+                    onPress={() => handleCardPress(item)}
+                    style={{width: '100%'}}
+                    imageStyle={{
+                      borderWidth: selectedUsers[item.id] ? 2 : 0,
+                      borderColor: 'green',
+                    }}
+                    isSelected={selectedUsers[item.id] ? true : false}
+                  />
+                </TouchableOpacity>
+              )}
+              horizontal={false}
+              numColumns={2}
+              style={styles(height).flatlistStyle}
+              contentContainerStyle={{
+                paddingTop: height * 0.015,
+              }}
+            />
+          </View>
+        </View>
+        <Button
+          onPress={addDues}
+          loading={loading}
+          disabled={loading}
+          mode="contained"
+          style={{
+            borderColor: 'black',
+            marginTop: height * 0.015,
+            backgroundColor: loading ? 'rgba(0,0,0,0.12)' : 'green',
+          }}>
+          {loading ? '' : 'ADD DUES'}
+        </Button>
       </View>
-      <Button
-        onPress={addDues}
-        loading={loading}
-        disabled={loading}
-        mode="contained"
-        style={{
-          borderRadius: 10,
-          borderColor: 'black',
-          marginTop: height * 0.015,
-        }}>
-        {loading ? '' : 'ADD DUES'}
-      </Button>
+
       <DuesAdded
         isVisible={addedModal}
         onBackdropPress={clearFields}

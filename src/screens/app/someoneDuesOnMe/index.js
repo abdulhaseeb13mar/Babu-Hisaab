@@ -6,11 +6,15 @@ import {useSelector} from 'react-redux';
 import constants from '../../../theme/constants';
 import firestore from '@react-native-firebase/firestore';
 import {Button} from 'react-native-paper';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Header from '../../../components/Header';
+import {color} from '../../../theme';
 
 const SomeoneDueOnMe = props => {
   useEffect(() => {
     fetchThisPersonDuesOnMe();
   }, []);
+  const navigation = useNavigation();
   const user = useSelector(state => state.userReducer);
   const height = useSelector(state => state.HeightReducer);
   const [totalDue, setTotalDue] = useState(0);
@@ -149,16 +153,13 @@ const SomeoneDueOnMe = props => {
 
   return (
     <WrapperScreen>
+      <Header
+        Title={`${friendInfo.name} Dues on me`}
+        leftIconName="arrow-left"
+        leftIcon={FontAwesome5}
+        leftIconAction={() => navigation.goBack()}
+      />
       <View style={{flex: 1}}>
-        <Text
-          style={{
-            color: 'black',
-            textAlign: 'center',
-            fontSize: 30,
-            fontWeight: 'bold',
-          }}>
-          {friendInfo.name.toUpperCase()} DUES ON{'\n'}ME
-        </Text>
         {loading ? (
           <View
             style={{
@@ -189,7 +190,8 @@ const SomeoneDueOnMe = props => {
                 style={{
                   marginTop: 30,
                   fontSize: 18,
-                  color: 'black',
+                  color: color.lightGrey3,
+                  fontWeight: 'bold',
                   textAlign: 'center',
                 }}>
                 {friendInfo.name} does not have{'\n'}any dues on you.
@@ -200,13 +202,13 @@ const SomeoneDueOnMe = props => {
       </View>
       <View
         style={{
-          borderWidth: 1.5,
           backgroundColor: 'white',
           borderTopLeftRadius: 25,
           borderTopRightRadius: 25,
-          paddingHorizontal: width * 0.05,
-          paddingVertical: height * 0.02,
+          paddingTop: height * 0.02,
+          paddingBottom: height * 0.015,
           elevation: 5,
+          borderWidth: 1.5,
           borderColor: '#bcbcbc',
         }}>
         <View
@@ -214,6 +216,7 @@ const SomeoneDueOnMe = props => {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
+            paddingHorizontal: width * 0.05,
           }}>
           <Text
             style={{
@@ -233,15 +236,20 @@ const SomeoneDueOnMe = props => {
             {selectedTotal > 0 ? selectedTotal : totalDue}
           </Text>
         </View>
-        <Button
-          mode="contained"
-          disabled={Object.keys(selectedCards).length === 0 || btnLoading}
-          loading={btnLoading}
-          onPress={markAsPaid}
-          style={{borderRadius: 10, marginTop: height * 0.02}}>
-          {btnLoading ? '' : 'Mark as Paid'}
-        </Button>
       </View>
+      <Button
+        mode="contained"
+        disabled={Object.keys(selectedCards).length === 0 || btnLoading}
+        loading={btnLoading}
+        onPress={markAsPaid}
+        style={{
+          backgroundColor:
+            Object.keys(selectedCards).length === 0 || btnLoading
+              ? 'rgba(0,0,0,0.12)'
+              : 'green',
+        }}>
+        {btnLoading ? '' : 'Mark as Paid'}
+      </Button>
     </WrapperScreen>
   );
 };

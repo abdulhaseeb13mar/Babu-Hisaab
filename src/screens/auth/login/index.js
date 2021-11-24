@@ -5,7 +5,7 @@ import auth from '@react-native-firebase/auth';
 import styles from './style';
 import {color} from '../../../theme';
 import {isFormValid} from './validation';
-import {WrapperScreen} from '../../../components';
+import {WrapperScreen, Input} from '../../../components';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {connect, useSelector} from 'react-redux';
@@ -80,20 +80,31 @@ const Login = props => {
           }}>
           BABU HISAAB
         </Text>
-        <TextInput
+        <Input
+          placeholder="Email"
+          style={styles.input}
+          onChangeText={changeEmail}
+        />
+        {/* <TextInput
           placeholder="Email"
           placeholderTextColor={color.darkGray}
           style={styles.input}
           onChangeText={changeEmail}
-        />
+        /> */}
         <Text style={{color: 'black'}}>{emailErrorMsg}</Text>
-        <TextInput
+        <Input
+          placeholder="Password"
+          style={styles.input}
+          onChangeText={changePassword}
+          secureTextEntry
+        />
+        {/* <TextInput
           placeholder="Password"
           placeholderTextColor={color.darkGray}
           style={styles.input}
           onChangeText={changePassword}
           secureTextEntry
-        />
+        /> */}
         <Text style={{color: 'black'}}>{passwordErrorMsg}</Text>
         {loading ? (
           <ActivityIndicator size="small" color="#0000ff" />

@@ -6,6 +6,8 @@ import MyDuesOnSomeone from './myDuesOnSomeone';
 import SomeoneDuesOnMe from './someoneDuesOnMe';
 import ConfirmDuesPaid from './confirmDuesPaid';
 import PaybackDetails from './paybackDetails';
+import ProfileSettings from './profileSettings';
+import changePassword from './changePassword';
 
 export {
   Home,
@@ -16,4 +18,6 @@ export {
   SomeoneDuesOnMe,
   ConfirmDuesPaid,
   PaybackDetails,
+  ProfileSettings,
+  changePassword,
 };
