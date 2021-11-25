@@ -16,7 +16,7 @@ const SettingTile = ({name, onPress = () => {}}) => {
       <Avatar.Icon
         icon={() => <FontAwesome5 name="user-lock" size={20} color="green" />}
         size={50}
-        style={(styles(height), avatar)}
+        style={styles(height).avatar}
       />
       <View style={styles(height).textBox}>
         <Text style={styles(height).text}>{name}</Text>
