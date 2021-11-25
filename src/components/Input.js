@@ -1,6 +1,5 @@
 import React from 'react';
-import {TextInput} from 'react-native';
-import {useSelector} from 'react-redux';
+import {TextInput, StyleSheet} from 'react-native';
 import {width} from '.';
 import {color} from '../theme';
 
@@ -12,22 +11,11 @@ const Input = ({
   style = {},
   ...props
 }) => {
-  const height = useSelector(state => state.HeightReducer);
   return (
     <TextInput
       placeholder={placeholder}
       style={{
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: color.lightGrey1,
-        backgroundColor: 'white',
-        elevation: 3,
-        fontSize: 20,
-        color: 'black',
-        fontWeight: 'bold',
-        paddingHorizontal: width * 0.04,
-        marginTop: height * 0.05,
-        marginHorizontal: width * 0.05,
+        ...styles.Input,
         ...style,
       }}
       keyboardType={keyboardType}
@@ -38,5 +26,20 @@ const Input = ({
     />
   );
 };
+
+const styles = StyleSheet.create({
+  Input: {
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: color.lightGrey1,
+    backgroundColor: 'white',
+    elevation: 3,
+    fontSize: 20,
+    color: 'black',
+    fontWeight: 'bold',
+    paddingHorizontal: width * 0.04,
+    marginHorizontal: width * 0.05,
+  },
+});
 
 export default Input;

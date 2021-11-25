@@ -7,6 +7,7 @@ import {useNavigation} from '@react-navigation/core';
 import constants from '../../../theme/constants';
 import Header from '../../../components/Header';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import styles from './style';
 
 const ProfileSettings = () => {
   const height = useSelector(state => state.HeightReducer);
@@ -20,29 +21,16 @@ const ProfileSettings = () => {
         leftIcon={FontAwesome5}
         leftIconAction={() => navigation.goBack()}
       />
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          paddingVertical: height * 0.03,
-        }}>
-        <View style={{borderWidth: 3, borderColor: 'green', borderRadius: 85}}>
+      <View style={styles(height).mainContainer}>
+        <View style={styles(height).avatarBox}>
           <Avatar.Image
             source={{uri: user.photo}}
             size={85}
-            style={{elevation: 5}}
+            style={styles(height).avatar}
           />
         </View>
-        <Text
-          style={{
-            fontSize: 25,
-            fontWeight: 'bold',
-            color: 'black',
-            marginTop: height * 0.01,
-          }}>
-          {user.name}
-        </Text>
-        <View style={{marginTop: height * 0.03, width: '100%'}}>
+        <Text style={styles(height).userName}>{user.name}</Text>
+        <View style={styles(height).SettingTileBox}>
           <SettingTile
             name="Change Password"
             onPress={() =>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import {useSelector} from 'react-redux';
 import {width} from '../../components';
@@ -24,44 +24,50 @@ const DuesAdded = ({
 
   return (
     <Modal isVisible={isVisible} onBackdropPress={onBackdropPress}>
-      <View
-        style={{
-          backgroundColor: 'white',
-          borderRadius: 10,
-          paddingHorizontal: width * 0.05,
-          paddingVertical: height * 0.02,
-        }}>
-        <Text
-          style={{
-            color: 'black',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            fontSize: 20,
-          }}>
-          DUES ADDED SUCCESSFULLY
+      <View style={styles(height).wrapper}>
+        <Text style={styles(height).heading}>
+          DUES ADDED{'\n'}SUCCESSFULLY!
         </Text>
-        <Text
-          style={{
-            color: 'black',
-            textAlign: 'center',
-            fontSize: 17,
-            marginTop: height * 0.02,
-          }}>
+        <Text style={styles(height).subText}>
           {`RS ${amount} has been added to the following Babusoftians:`}
         </Text>
-        <Text
-          style={{
-            color: 'black',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            fontSize: 17,
-            marginTop: height * 0.02,
-          }}>
+        <Text style={styles(height).names}>
           {Object.keys(selectedUsers).length > 0 && prepareNames()}
         </Text>
       </View>
     </Modal>
   );
 };
+
+const styles = height =>
+  StyleSheet.create({
+    names: {
+      color: 'green',
+      textAlign: 'center',
+      fontWeight: 'bold',
+      fontSize: 17,
+      marginTop: height * 0.02,
+    },
+    subText: {
+      color: 'black',
+      textAlign: 'center',
+      fontSize: 17,
+      marginTop: height * 0.02,
+    },
+    heading: {
+      color: 'black',
+      textAlign: 'center',
+      fontWeight: 'bold',
+      fontSize: 20,
+    },
+    wrapper: {
+      backgroundColor: 'white',
+      borderRadius: 10,
+      paddingHorizontal: width * 0.05,
+      paddingVertical: height * 0.02,
+      borderWidth: 5,
+      borderColor: 'green',
+    },
+  });
 
 export default DuesAdded;

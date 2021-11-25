@@ -23,7 +23,6 @@ const AllDues = () => {
   const {collections} = constants;
 
   const duesOnOthersRef = firestore().collection(collections.DUES_ON_OTHER);
-  const duesOnMeRef = firestore().collection(collections.DUES_ON_ME);
 
   const getAllDues = async () => {
     await duesOnOthersRef
@@ -77,9 +76,6 @@ const AllDues = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{alignItems: 'center'}}
           renderItem={({item}) => {
-            console.log(item);
-            console.log(duesOnOthers[item]);
-            console.log(allUsers);
             return (
               <DueCard
                 item={duesOnOthers[item]}

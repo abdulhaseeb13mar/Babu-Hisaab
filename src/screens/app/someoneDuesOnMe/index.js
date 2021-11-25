@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, FlatList, ActivityIndicator} from 'react-native';
-import {WrapperScreen, width, DueCard} from '../../../components';
+import {WrapperScreen, DueCard} from '../../../components';
 import {useNavigation} from '@react-navigation/core';
 import {useSelector} from 'react-redux';
 import constants from '../../../theme/constants';
@@ -9,6 +9,8 @@ import {Button} from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Header from '../../../components/Header';
 import {color} from '../../../theme';
+import {showSnackbar} from '../../../utils/snackbar';
+import styles from './style';
 
 const SomeoneDueOnMe = props => {
   useEffect(() => {
@@ -63,7 +65,13 @@ const SomeoneDueOnMe = props => {
           setTotalDue(total);
           return setDuesList([...response[friendInfo.id]]);
         }
-      });
+      })
+      .catch(() =>
+        showSnackbar(
+          'error fetching user dues. Try Again or contact admin',
+          snackbarType.SNACKBAR_ERROR,
+        ),
+      );
     setLoading(false);
   };
 
@@ -147,7 +155,12 @@ const SomeoneDueOnMe = props => {
         setSelectedTotal(0);
         fetchThisPersonDuesOnMe();
       })
-      .catch(e => console.log(e));
+      .catch(e =>
+        showSnackbar(
+          'error marking dues as paid. Try Again or contact admin',
+          snackbarType.SNACKBAR_ERROR,
+        ),
+      );
     setBtnLoading(false);
   };
 
@@ -159,21 +172,16 @@ const SomeoneDueOnMe = props => {
         leftIcon={FontAwesome5}
         leftIconAction={() => navigation.goBack()}
       />
-      <View style={{flex: 1}}>
+      <View style={styles(height).mainContainer}>
         {loading ? (
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+          <View style={styles(height).loaderBox}>
             <ActivityIndicator size={40} color="green" />
           </View>
         ) : (
           <FlatList
             data={duesList}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{alignItems: 'center'}}
+            contentContainerStyle={styles(height).contentContainerStyle}
             renderItem={({item, index}) => (
               <DueCard
                 index={index}
@@ -186,52 +194,22 @@ const SomeoneDueOnMe = props => {
               />
             )}
             ListEmptyComponent={
-              <Text
-                style={{
-                  marginTop: 30,
-                  fontSize: 18,
-                  color: color.lightGrey3,
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                }}>
+              <Text style={styles(height).zeroStateText}>
                 {friendInfo.name} does not have{'\n'}any dues on you.
               </Text>
             }
           />
         )}
       </View>
-      <View
-        style={{
-          backgroundColor: 'white',
-          borderTopLeftRadius: 25,
-          borderTopRightRadius: 25,
-          paddingTop: height * 0.02,
-          paddingBottom: height * 0.015,
-          elevation: 5,
-          borderWidth: 1.5,
-          borderColor: '#bcbcbc',
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingHorizontal: width * 0.05,
-          }}>
-          <Text
-            style={{
-              color: 'black',
-              fontSize: 18,
-              fontWeight: 'bold',
-              opacity: 0.5,
-            }}>
+      <View style={styles(height).totalBox}>
+        <View style={styles(height).totalRow}>
+          <Text style={styles(height).totalText}>
             {selectedTotal > 0 ? 'Selected Total' : 'TOTAL'}
           </Text>
           <Text
             style={{
               color: selectedTotal > 0 ? 'green' : 'black',
-              fontSize: 26,
-              fontWeight: 'bold',
+              ...styles(height).totalAmount,
             }}>
             {selectedTotal > 0 ? selectedTotal : totalDue}
           </Text>

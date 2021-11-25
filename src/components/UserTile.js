@@ -26,12 +26,7 @@ const UserTile = ({
             name="check-circle-o"
             color="green"
             size={27}
-            style={{
-              position: 'absolute',
-              top: -10,
-              elevation: 4,
-              right: width * 0.02,
-            }}
+            style={styles(height).checkIcon}
           />
         )}
         <View style={styles(height).innerCardContainer}>
@@ -51,6 +46,12 @@ const UserTile = ({
 
 const styles = height =>
   StyleSheet.create({
+    checkIcon: {
+      position: 'absolute',
+      top: -10,
+      elevation: 4,
+      right: width * 0.02,
+    },
     outWrapper: {
       width: '50%',
     },

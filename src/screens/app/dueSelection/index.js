@@ -7,6 +7,7 @@ import constants from '../../../theme/constants';
 import {Avatar} from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Header from '../../../components/Header';
+import styles from './style';
 
 const DueSelection = () => {
   const navigation = useNavigation();
@@ -21,13 +22,7 @@ const DueSelection = () => {
         leftIcon={FontAwesome5}
         leftIconAction={() => navigation.goBack()}
       />
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'space-evenly',
-          paddingHorizontal: width * 0.06,
-        }}>
+      <View style={styles(height).mainContainer}>
         <DueDirectionCard
           user={user}
           selectedUser={selectedUser}
@@ -59,42 +54,26 @@ const DueSelection = () => {
 
 const DueDirectionCard = ({height, user, selectedUser, duesOnMe, onPress}) => {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={{
-        width: '100%',
-        alignItems: 'center',
-        borderRadius: 10,
-        backgroundColor: 'white',
-        paddingVertical: height * 0.02,
-        elevation: 4,
-      }}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+    <TouchableOpacity onPress={onPress} style={styles(height).mainBox}>
+      <View style={styles(height).avatarsBox}>
         <Avatar.Image
           source={{uri: duesOnMe ? user.photo : selectedUser.photo}}
-          style={{backgroundColor: 'white', elevation: 5}}
+          style={styles(height).avatar}
           size={(width / height) * 180}
         />
         <FontAwesome5
           name={`arrow-circle-right`}
           size={(width / height) * 100}
-          style={{marginHorizontal: width * 0.06}}
+          style={styles(height).arrowIcon}
           color="green"
         />
         <Avatar.Image
           source={{uri: duesOnMe ? selectedUser.photo : user.photo}}
-          style={{backgroundColor: 'white', elevation: 5}}
+          style={styles(height).avatar}
           size={(width / height) * 180}
         />
       </View>
-      <Text
-        style={{
-          color: 'black',
-          textAlign: 'center',
-          fontWeight: 'bold',
-          marginTop: height * 0.02,
-          fontSize: 20,
-        }}>
+      <Text style={styles(height).text}>
         {duesOnMe
           ? `Your dues on ${selectedUser.name}`
           : `${selectedUser.name} dues on you`}

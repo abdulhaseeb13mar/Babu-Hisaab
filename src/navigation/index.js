@@ -40,9 +40,7 @@ const Routes = props => {
       const userInfo = await AsyncStorage.getItem(constants.async.user);
       let data = userInfo != null ? JSON.parse(userInfo) : null;
       props.setUserInfoAction(data);
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   };
 
   const LightTheme = {

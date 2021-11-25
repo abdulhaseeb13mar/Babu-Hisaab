@@ -1,9 +1,7 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {View, Text, TextInput, Button, ActivityIndicator} from 'react-native';
+import {View, Text} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import styles from './style';
-import {color} from '../../../theme';
 import {isFormValid} from './validation';
 import {WrapperScreen, Input} from '../../../components';
 import firestore from '@react-native-firebase/firestore';
@@ -11,57 +9,52 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {connect, useSelector} from 'react-redux';
 import {setUserInfoAction} from '../../../redux/actions';
 import {constants} from '../../../theme';
+import {Button} from 'react-native-paper';
+import {showSnackbar} from '../../../utils/snackbar';
 
 const Login = props => {
+  const height = useSelector(state => state.HeightReducer);
+  const {collections, async, snackbarType} = constants;
+
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
-  const [emailErrorMsg, setEmailErrorMsg] = useState('');
-  const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
-
-  const height = useSelector(state => state.HeightReducer);
 
   const Signin = () => {
     const validation = isFormValid(email, password);
     if (!validation.status) {
-      console.log('ara', validation);
-      errorMsgHandler(validation.errCategory, validation.errMsg);
+      showSnackbar(validation.errMsg, snackbarType.SNACKBAR_ERROR);
     } else {
       setLoading(true);
       auth()
         .signInWithEmailAndPassword(email, password)
         .then(async ({user}) => {
-          console.log(user);
           const userInfo = await firestore()
-            .collection(constants.collections.USERS_INFO)
+            .collection(collections.USERS_INFO)
             .doc(user.uid)
             .get();
           if (userInfo.exists) {
             try {
               await AsyncStorage.setItem(
-                constants.async.user,
+                async.user,
                 JSON.stringify(userInfo.data()),
               );
               props.setUserInfoAction(userInfo.data());
             } catch (e) {
-              console.log(e);
+              showSnackbar(
+                'error in user info contact admin',
+                snackbarType.SNACKBAR_ERROR,
+              );
             }
           }
         })
         .catch(err => {
+          showSnackbar(
+            'invalid email or password',
+            snackbarType.SNACKBAR_ERROR,
+          );
           setLoading(false);
-          console.log(err);
         });
-    }
-  };
-
-  const errorMsgHandler = (errCategory, errMsg) => {
-    if (errCategory === 'email') {
-      setEmailErrorMsg(errMsg);
-      setPasswordErrorMsg('');
-    } else if (errCategory === 'password') {
-      setPasswordErrorMsg(errMsg);
-      setEmailErrorMsg('');
     }
   };
 
@@ -85,33 +78,23 @@ const Login = props => {
           style={styles.input}
           onChangeText={changeEmail}
         />
-        {/* <TextInput
-          placeholder="Email"
-          placeholderTextColor={color.darkGray}
-          style={styles.input}
-          onChangeText={changeEmail}
-        /> */}
-        <Text style={{color: 'black'}}>{emailErrorMsg}</Text>
         <Input
           placeholder="Password"
-          style={styles.input}
+          style={{...styles.input, marginTop: height * 0.025}}
           onChangeText={changePassword}
           secureTextEntry
         />
-        {/* <TextInput
-          placeholder="Password"
-          placeholderTextColor={color.darkGray}
-          style={styles.input}
-          onChangeText={changePassword}
-          secureTextEntry
-        /> */}
-        <Text style={{color: 'black'}}>{passwordErrorMsg}</Text>
-        {loading ? (
-          <ActivityIndicator size="small" color="#0000ff" />
-        ) : (
-          <Button title="Login" onPress={Signin} />
-        )}
       </View>
+      <Button
+        mode="contained"
+        loading={loading}
+        disabled={loading}
+        onPress={Signin}
+        style={{
+          backgroundColor: loading ? 'rgba(0,0,0,0.12)' : 'green',
+        }}>
+        {!loading && 'Login'}
+      </Button>
     </WrapperScreen>
   );
 };

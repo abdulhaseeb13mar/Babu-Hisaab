@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, FlatList, ActivityIndicator} from 'react-native';
-import {WrapperScreen, width, DueCard} from '../../../components';
+import {WrapperScreen, DueCard} from '../../../components';
 import {useSelector} from 'react-redux';
 import constants from '../../../theme/constants';
 import firestore from '@react-native-firebase/firestore';
@@ -8,7 +8,8 @@ import {Button} from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/core';
 import Header from '../../../components/Header';
-import color from '../../../theme/color';
+import {showSnackbar} from '../../../utils/snackbar';
+import styles from './style';
 
 const MyDuesOnSomeone = props => {
   useEffect(() => {
@@ -23,7 +24,7 @@ const MyDuesOnSomeone = props => {
   const [selectedCards, setSelectedCards] = useState({});
 
   const friendInfo = props.route.params;
-  const {collections} = constants;
+  const {collections, snackbarType} = constants;
 
   const [duesList, setDuesList] = useState([]);
 
@@ -37,24 +38,32 @@ const MyDuesOnSomeone = props => {
 
   const fetchMyDuesOnThisPerson = async () => {
     setLoading(true);
-    await duesOnOtherRef.get().then(snapshot => {
-      let total = 0;
-      if (!snapshot.exists) {
-        setTotalDue(total);
-        return setDuesList([]);
-      }
-      const response = snapshot.data();
-      if (!response[friendInfo.id]) {
-        setTotalDue(total);
-        return setDuesList([]);
-      } else {
-        response[friendInfo.id].map(
-          due => (total = total + parseInt(due.amount)),
+    await duesOnOtherRef
+      .get()
+      .then(snapshot => {
+        let total = 0;
+        if (!snapshot.exists) {
+          setTotalDue(total);
+          return setDuesList([]);
+        }
+        const response = snapshot.data();
+        if (!response[friendInfo.id]) {
+          setTotalDue(total);
+          return setDuesList([]);
+        } else {
+          response[friendInfo.id].map(
+            due => (total = total + parseInt(due.amount)),
+          );
+          setTotalDue(total);
+          return setDuesList([...response[friendInfo.id]]);
+        }
+      })
+      .catch(e => {
+        showSnackbar(
+          'error fetching user dues. Try Again or contact admin',
+          snackbarType.SNACKBAR_ERROR,
         );
-        setTotalDue(total);
-        return setDuesList([...response[friendInfo.id]]);
-      }
-    });
+      });
     setLoading(false);
   };
 
@@ -110,7 +119,12 @@ const MyDuesOnSomeone = props => {
         setBtnLoading(false);
         fetchMyDuesOnThisPerson();
       })
-      .catch(e => console.log(e));
+      .catch(e =>
+        showSnackbar(
+          'error removing user dues. Try Again or contact admin',
+          snackbarType.SNACKBAR_ERROR,
+        ),
+      );
   };
 
   return (
@@ -123,19 +137,14 @@ const MyDuesOnSomeone = props => {
       />
       <View style={{flex: 1}}>
         {loading ? (
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+          <View style={styles(height).loaderBox}>
             <ActivityIndicator size={40} color="green" />
           </View>
         ) : (
           <FlatList
             data={duesList}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{alignItems: 'center'}}
+            contentContainerStyle={styles(height).contentContainerStyle}
             renderItem={({item, index}) => (
               <DueCard
                 index={index}
@@ -148,50 +157,17 @@ const MyDuesOnSomeone = props => {
               />
             )}
             ListEmptyComponent={
-              <Text
-                style={{
-                  marginTop: 30,
-                  fontSize: 18,
-                  color: color.lightGrey3,
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                }}>
+              <Text style={styles(height).zeroStateText}>
                 You do not have any{'\n'}dues on {friendInfo.name}
               </Text>
             }
           />
         )}
       </View>
-      <View
-        style={{
-          borderWidth: 1.5,
-          backgroundColor: 'white',
-          borderTopLeftRadius: 25,
-          borderTopRightRadius: 25,
-          paddingHorizontal: width * 0.05,
-          paddingTop: height * 0.02,
-          paddingBottom: height * 0.015,
-          elevation: 5,
-          borderColor: '#bcbcbc',
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-          <Text
-            style={{
-              color: 'black',
-              fontSize: 18,
-              fontWeight: 'bold',
-              opacity: 0.5,
-            }}>
-            TOTAL
-          </Text>
-          <Text style={{color: 'black', fontSize: 26, fontWeight: 'bold'}}>
-            {totalDue}
-          </Text>
+      <View style={styles(height).totalBox}>
+        <View style={styles(height).totalRow}>
+          <Text style={styles(height).totalText}>TOTAL</Text>
+          <Text style={styles(height).totalAmount}>{totalDue}</Text>
         </View>
       </View>
       <Button
@@ -205,7 +181,7 @@ const MyDuesOnSomeone = props => {
               ? 'rgba(0,0,0,0.12)'
               : 'red',
         }}
-        labelStyle={{fontWeight: 'bold'}}>
+        labelStyle={styles(height).btnLabel}>
         {btnLoading ? '' : 'Remove Due'}
       </Button>
     </WrapperScreen>

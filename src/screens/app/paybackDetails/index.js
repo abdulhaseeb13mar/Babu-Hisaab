@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import {View, Text, FlatList} from 'react-native';
 import {useSelector} from 'react-redux';
-import {DueCard, width, WrapperScreen} from '../../../components';
-import color from '../../../theme/color';
+import {DueCard, WrapperScreen} from '../../../components';
 import CheckBox from '@react-native-community/checkbox';
 import {Button} from 'react-native-paper';
 import constants from '../../../theme/constants';
@@ -10,6 +9,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/core';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Header from '../../../components/Header';
+import styles from './style';
 
 const PayBackDetails = props => {
   const height = useSelector(state => state.HeightReducer);
@@ -59,23 +59,31 @@ const PayBackDetails = props => {
 
   const confirmPaid = async () => {
     setLoading(true);
-    await dueToBeClearRef.get().then(async dues => {
-      const thisFriendDues = [...dues.data()[friendInfo.id]];
+    await dueToBeClearRef
+      .get()
+      .then(async dues => {
+        const thisFriendDues = [...dues.data()[friendInfo.id]];
 
-      const removedCurrentPaidDue = thisFriendDues.filter(
-        eachdue => eachdue.date !== paybackInfo.date,
+        const removedCurrentPaidDue = thisFriendDues.filter(
+          eachdue => eachdue.date !== paybackInfo.date,
+        );
+
+        return await dueToBeClearRef
+          .update({
+            [friendInfo.id]: [...removedCurrentPaidDue],
+          })
+          .then(async () => {
+            await addUnpaidDuesBack();
+            setLoading(false);
+            navigation.goBack();
+          });
+      })
+      .catch(() =>
+        showSnackbar(
+          'unable to clear dues. try again or contact admin',
+          snackbarType.SNACKBAR_ERROR,
+        ),
       );
-
-      await dueToBeClearRef
-        .update({
-          [friendInfo.id]: [...removedCurrentPaidDue],
-        })
-        .then(async () => {
-          await addUnpaidDuesBack();
-          setLoading(false);
-          navigation.goBack();
-        });
-    });
   };
 
   const addUnpaidDuesBack = async () => {
@@ -89,7 +97,6 @@ const PayBackDetails = props => {
       }
       return true;
     });
-    console.log('filterUnpaidCards', filterUnpaidCards);
     if (filterUnpaidCards.length > 0) {
       await firestore()
         .runTransaction(transaction => {
@@ -104,7 +111,6 @@ const PayBackDetails = props => {
               if (copyData[friendInfo.id]) {
                 let copyArray = [...copyData[friendInfo.id]];
                 filterUnpaidCards.map(eachCard => copyArray.push(eachCard));
-                console.log('copy array===', copyArray);
                 copyData[friendInfo.id] = copyArray;
               } else {
                 copyData[friendInfo.id] = [...filterUnpaidCards];
@@ -115,7 +121,7 @@ const PayBackDetails = props => {
           });
         })
         .then(async () => {
-          await firestore()
+          return await firestore()
             .runTransaction(async transaction => {
               const friendRef = firestore()
                 .collection(collections.DUES_ON_ME)
@@ -140,17 +146,15 @@ const PayBackDetails = props => {
               return Promise.resolve(true);
             })
             .then(() => {
-              // setAddedModal(true);
               setLoading(false);
-            })
-            .catch(err => {
-              setLoading(false);
-              console.log(err);
             });
         })
         .catch(err => {
+          showSnackbar(
+            'unable to add unpaid dues back. try again or contact admin',
+            snackbarType.SNACKBAR_ERROR,
+          );
           setLoading(false);
-          console.log(err);
         });
     }
   };
@@ -163,34 +167,21 @@ const PayBackDetails = props => {
         leftIcon={FontAwesome5}
         leftIconAction={() => navigation.goBack()}
       />
-      <Text
-        style={{
-          textAlign: 'center',
-          fontSize: 20,
-          marginTop: height * 0.02,
-          color: color.darkGray,
-        }}>
+      <Text style={styles(height).instruction}>
         Select the dues that have been paid
       </Text>
-      <View
-        style={{
-          alignItems: 'center',
-          flexDirection: 'row',
-          marginLeft: width * 0.05,
-          marginTop: height * 0.02,
-        }}>
+      <View style={styles(height).checkBoxConatiner}>
         <CheckBox
           value={toggleCheckBox}
           tintColors={{true: 'black', false: 'black'}}
-          //   onValueChange={newValue => setToggleCheckBox(newValue)}
           onValueChange={selectAll}
         />
-        <Text style={{color: 'black', fontSize: 15}}>Select All</Text>
+        <Text style={styles(height).checBoxText}>Select All</Text>
       </View>
       <FlatList
         data={paybackInfo.dueList}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{alignItems: 'center'}}
+        contentContainerStyle={styles(height).contentContainerStyle}
         renderItem={({item, index}) => (
           <DueCard
             index={index}
@@ -203,7 +194,7 @@ const PayBackDetails = props => {
           />
         )}
         ListEmptyComponent={
-          <Text style={{marginTop: 30, fontSize: 18, color: 'black'}}>
+          <Text style={styles(height).zeroState}>
             You dont have any dues on {friendInfo.name}
           </Text>
         }

@@ -8,12 +8,13 @@ import {
 } from 'react-native';
 import constants from '../../../theme/constants';
 import firestore from '@react-native-firebase/firestore';
-import {WrapperScreen, UserTile, width} from '../../../components';
+import {WrapperScreen, UserTile} from '../../../components';
 import styles from './style';
 import {useDispatch, useSelector} from 'react-redux';
-import {Button, Avatar} from 'react-native-paper';
+import {Avatar} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/core';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {showSnackbar} from '../../../utils/snackbar';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -33,13 +34,11 @@ const Home = () => {
   useEffect(() => {
     getUsers();
     const subscriber = duesToClearRef.onSnapshot(snapshot => {
-      console.log('snapshot', snapshot.data());
       let pendingDuesLength = 0;
       if (snapshot.exists) {
         Object.values(snapshot.data()).map(arr => {
           pendingDuesLength = arr.length + pendingDuesLength;
         });
-        console.log(pendingDuesLength, Object.values(snapshot.data()));
         dispatch({
           type: actionTypes.SET_DUES_TO_BE_CLEAR,
           payload: {
@@ -77,7 +76,12 @@ const Home = () => {
           payload: {allUsers},
         });
       })
-      .catch(e => console.log(e));
+      .catch(e =>
+        showSnackbar(
+          'error fetching users info. try again or contact admin',
+          snackbarType.SNACKBAR_ERROR,
+        ),
+      );
   };
 
   const GotoAddDues = () => navigation.navigate(appScreens.AddDues);
@@ -94,40 +98,21 @@ const Home = () => {
   };
 
   return (
-    <WrapperScreen style={{backgroundColor: 'white'}}>
-      <View style={{flex: 1}}>
-        <View
-          style={{
-            marginTop: height * 0.015,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingHorizontal: width * 0.05,
-          }}>
+    <WrapperScreen style={styles(height).screenWrapper}>
+      <View style={styles(height).mainContainer}>
+        <View style={styles(height).headerBox}>
           <TouchableOpacity onPress={GoToConfirmDues} activeOpacity={0.9}>
             {duesToBeClearLength > 0 && (
               <Avatar.Text
                 label={duesToBeClearLength}
                 color="white"
-                style={{
-                  backgroundColor: 'red',
-                  elevation: 3,
-                  position: 'absolute',
-                  right: 0,
-                }}
+                style={styles(height).notificationIcon}
                 size={17}
               />
             )}
             <Ionicons name="notifications-outline" size={35} color="black" />
           </TouchableOpacity>
-          <Text
-            style={{
-              color: 'green',
-              textAlign: 'center',
-              fontSize: 25,
-              fontWeight: 'bold',
-              fontStyle: 'italic',
-            }}>
+          <Text style={styles(height).headerText}>
             <Text style={{fontStyle: 'normal', color: 'black'}}>BABU</Text>{' '}
             HISAAB
           </Text>
@@ -135,46 +120,21 @@ const Home = () => {
             <Avatar.Image
               source={{uri: user.photo}}
               size={40}
-              style={{elevation: 3}}
+              style={styles(height).avatarPhoto}
             />
           </TouchableOpacity>
         </View>
         {allUsers.length === 0 ? (
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+          <View style={styles(height).loaderBox}>
             <ActivityIndicator size="large" color="blue" />
           </View>
         ) : (
           <View style={styles(height).listContainer}>
-            {/* <Button
-              mode="contained"
-              onPress={GotoAddDues}
-              style={{marginVertical: height * 0.03}}
-              icon={'plus'}>
-              Add Dues
-            </Button> */}
             <TouchableOpacity
               activeOpacity={0.9}
               onPress={GotoAddDues}
-              style={{
-                alignSelf: 'flex-start',
-                marginTop: height * 0.02,
-                marginBottom: height * 0.03,
-                paddingLeft: width * 0.05,
-                paddingRight: width * 0.05,
-                borderTopRightRadius: 30,
-                borderBottomRightRadius: 30,
-                paddingVertical: height * 0.01,
-                elevation: 5,
-                backgroundColor: 'green',
-              }}>
-              <Text style={{fontSize: 20, fontWeight: 'bold', color: 'white'}}>
-                Add Dues
-              </Text>
+              style={styles(height).AddDuesBtn}>
+              <Text style={styles(height).addDuesText}>Add Dues</Text>
             </TouchableOpacity>
             <FlatList
               data={allUsers}

@@ -1,3 +1,3 @@
 import Navigator from './navigator';
-
-export {Navigator};
+import Snackbar from './snackbar';
+export {Navigator, Snackbar};

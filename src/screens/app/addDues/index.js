@@ -2,15 +2,15 @@ import React, {useState} from 'react';
 import {View, TextInput, FlatList, TouchableOpacity} from 'react-native';
 import styles from './style';
 import {useNavigation} from '@react-navigation/core';
-import {Button, Text} from 'react-native-paper';
+import {Button} from 'react-native-paper';
 import {WrapperScreen, UserTile} from '../../../components';
 import {useSelector} from 'react-redux';
 import {color, constants} from '../../../theme';
-import {width} from '../../../components/Responsive';
 import firestore from '@react-native-firebase/firestore';
 import {DuesAdded} from '../../../components/modals';
 import Header from '../../../components/Header';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {showSnackbar} from '../../../utils/snackbar';
 
 const AddDues = () => {
   const height = useSelector(state => state.HeightReducer);
@@ -19,7 +19,7 @@ const AddDues = () => {
 
   const navigation = useNavigation();
 
-  const {collections} = constants;
+  const {collections, snackbarType} = constants;
 
   const UserRef = firestore()
     .collection(collections.DUES_ON_OTHER)
@@ -42,6 +42,15 @@ const AddDues = () => {
   };
 
   const addDues = async () => {
+    if (amount === '') {
+      return showSnackbar('Enter amount', snackbarType.SNACKBAR_ERROR);
+    }
+    if (description === '') {
+      return showSnackbar('Enter description', snackbarType.SNACKBAR_ERROR);
+    }
+    if (Object.keys(selectedUsers).length === 0) {
+      return showSnackbar('Select Babusoftians', snackbarType.SNACKBAR_ERROR);
+    }
     setLoading(true);
     const usersSelected = Object.keys(selectedUsers);
     let dataTobeUpdated = {};
@@ -77,7 +86,7 @@ const AddDues = () => {
         });
       })
       .then(async () => {
-        await firestore()
+        return await firestore()
           .runTransaction(async transaction => {
             for (let i = 0; i < usersSelected.length; i++) {
               const userId = usersSelected[i];
@@ -109,13 +118,19 @@ const AddDues = () => {
             setLoading(false);
           })
           .catch(err => {
+            showSnackbar(
+              'error adding user dues. try again or contact admin',
+              snackbarType.SNACKBAR_ERROR,
+            );
             setLoading(false);
-            console.log(err);
           });
       })
       .catch(err => {
+        showSnackbar(
+          'error adding user dues. try again or contact admin',
+          snackbarType.SNACKBAR_ERROR,
+        );
         setLoading(false);
-        console.log(err);
       });
   };
 
@@ -134,28 +149,11 @@ const AddDues = () => {
         leftIcon={FontAwesome5}
         leftIconAction={() => navigation.goBack()}
       />
-      <View
-        style={{
-          marginHorizontal: width * 0,
-          flex: 1,
-          justifyContent: 'space-between',
-        }}>
+      <View style={styles(height).mainContainer}>
         <View>
           <TextInput
             placeholder="Enter Amount"
-            style={{
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: color.lightGrey1,
-              backgroundColor: 'white',
-              elevation: 3,
-              fontSize: 20,
-              color: 'black',
-              fontWeight: 'bold',
-              paddingHorizontal: width * 0.04,
-              marginTop: height * 0.05,
-              marginHorizontal: width * 0.05,
-            }}
+            style={styles(height).amountInput}
             keyboardType="decimal-pad"
             placeholderTextColor={color.lightGrey3}
             onChangeText={t => setAmount(t)}
@@ -163,18 +161,7 @@ const AddDues = () => {
           />
           <TextInput
             placeholder="Enter Description"
-            style={{
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: color.lightGrey1,
-              backgroundColor: 'white',
-              elevation: 3,
-              fontSize: 20,
-              color: 'black',
-              paddingHorizontal: width * 0.04,
-              marginVertical: height * 0.03,
-              marginHorizontal: width * 0.05,
-            }}
+            style={styles(height).descriptionInput}
             placeholderTextColor={color.lightGrey3}
             onChangeText={t => setDescription(t)}
             value={description}
@@ -185,15 +172,15 @@ const AddDues = () => {
               showsVerticalScrollIndicator={false}
               renderItem={({item}) => (
                 <TouchableOpacity
-                  style={{width: '50%', borderWidth: 0}}
+                  style={styles(height).userTileOuterBox}
                   onPress={() => handleCardPress(item)}>
                   <UserTile
                     item={item}
                     onPress={() => handleCardPress(item)}
                     style={{width: '100%'}}
                     imageStyle={{
+                      ...styles(height).imageStyle,
                       borderWidth: selectedUsers[item.id] ? 2 : 0,
-                      borderColor: 'green',
                     }}
                     isSelected={selectedUsers[item.id] ? true : false}
                   />
@@ -202,9 +189,7 @@ const AddDues = () => {
               horizontal={false}
               numColumns={2}
               style={styles(height).flatlistStyle}
-              contentContainerStyle={{
-                paddingTop: height * 0.015,
-              }}
+              contentContainerStyle={styles(height).contentContainerStyle}
             />
           </View>
         </View>
@@ -214,14 +199,12 @@ const AddDues = () => {
           disabled={loading}
           mode="contained"
           style={{
-            borderColor: 'black',
-            marginTop: height * 0.015,
+            ...styles(height).btnStyle,
             backgroundColor: loading ? 'rgba(0,0,0,0.12)' : 'green',
           }}>
           {loading ? '' : 'ADD DUES'}
         </Button>
       </View>
-
       <DuesAdded
         isVisible={addedModal}
         onBackdropPress={clearFields}

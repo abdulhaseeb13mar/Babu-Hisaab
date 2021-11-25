@@ -6,7 +6,7 @@ import {useNavigation} from '@react-navigation/core';
 import constants from '../../../theme/constants';
 import Header from '../../../components/Header';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {color} from '../../../theme';
+import styles from './style';
 
 const ConfirmDuesPaid = () => {
   const navigation = useNavigation();
@@ -55,29 +55,9 @@ const ConfirmDuesPaid = () => {
               }
             />
           )}
-          ListEmptyComponent={
-            <Text
-              style={{
-                marginTop: 30,
-                fontSize: 18,
-                color: color.lightGrey3,
-                fontWeight: 'bold',
-                textAlign: 'center',
-                borderWidth: 1,
-              }}>
-              hasd
-            </Text>
-          }
         />
       ) : (
-        <Text
-          style={{
-            marginTop: 30,
-            fontSize: 18,
-            color: color.lightGrey3,
-            fontWeight: 'bold',
-            textAlign: 'center',
-          }}>
+        <Text style={styles.zeroStateText}>
           You do not have any{'\n'}dues to confirm
         </Text>
       )}
