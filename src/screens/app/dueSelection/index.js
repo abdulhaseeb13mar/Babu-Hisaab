@@ -30,7 +30,9 @@ const DueSelection = () => {
           duesOnMe={true}
           onPress={() =>
             navigation.navigate(
-              constants.appScreens.MyDuesOnSomeone,
+              selectedUser.name === 'everyone'
+                ? constants.appScreens.AllDuesOnOthers
+                : constants.appScreens.MyDuesOnSomeone,
               selectedUser,
             )
           }
@@ -42,7 +44,9 @@ const DueSelection = () => {
           duesOnMe={false}
           onPress={() =>
             navigation.navigate(
-              constants.appScreens.SomeoneDuesOnMe,
+              selectedUser.name === 'everyone'
+                ? constants.appScreens.AllDuesOnMe
+                : constants.appScreens.SomeoneDuesOnMe,
               selectedUser,
             )
           }

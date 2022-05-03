@@ -1,7 +1,8 @@
 import Home from './home';
 import AddDues from './addDues';
 import DueSelection from './dueSelection';
-import AllDues from './allDues';
+import AllDuesOnOthers from './allDuesOnOthers';
+import allDuesOnMe from './allDuesOnMe';
 import MyDuesOnSomeone from './myDuesOnSomeone';
 import SomeoneDuesOnMe from './someoneDuesOnMe';
 import ConfirmDuesPaid from './confirmDuesPaid';
@@ -13,7 +14,8 @@ export {
   Home,
   AddDues,
   DueSelection,
-  AllDues,
+  allDuesOnMe,
+  AllDuesOnOthers,
   MyDuesOnSomeone,
   SomeoneDuesOnMe,
   ConfirmDuesPaid,

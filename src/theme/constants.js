@@ -20,11 +20,16 @@ const Constants = {
   authScreens: {
     Login: 'Login',
   },
+  url: {
+    xordLogo:
+      'https://avatars.slack-edge.com/2022-04-16/3395744643941_833f0eaf535bd909c68c_230.png',
+  },
   appScreens: {
     Home: 'Home',
     AddDues: 'AddDues',
     DueSelection: 'DueSelection',
-    AllDues: 'AllDues',
+    AllDuesOnOthers: 'AllDuesOnOthers',
+    AllDuesOnMe: 'AllDuesOnMe',
     MyDuesOnSomeone: 'MyDuesOnSomeone',
     SomeoneDuesOnMe: 'SomeoneDuesOnMe',
     confirmDuesPaid: 'confirmDuesPaid',

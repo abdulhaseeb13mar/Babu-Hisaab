@@ -12,13 +12,14 @@ import {
   Home,
   AddDues,
   DueSelection,
-  AllDues,
+  AllDuesOnOthers,
   MyDuesOnSomeone,
   SomeoneDuesOnMe,
   ConfirmDuesPaid,
   PaybackDetails,
   ProfileSettings,
   changePassword,
+  allDuesOnMe,
 } from '../../screens/app';
 
 export default function AppStack() {
@@ -37,7 +38,11 @@ export default function AppStack() {
       <Stack.Screen name={appScreens.Home} component={Home} />
       <Stack.Screen name={appScreens.AddDues} component={AddDues} />
       <Stack.Screen name={appScreens.DueSelection} component={DueSelection} />
-      <Stack.Screen name={appScreens.AllDues} component={AllDues} />
+      <Stack.Screen
+        name={appScreens.AllDuesOnOthers}
+        component={AllDuesOnOthers}
+      />
+      <Stack.Screen name={appScreens.AllDuesOnMe} component={allDuesOnMe} />
       <Stack.Screen
         name={appScreens.ChangePassword}
         component={changePassword}

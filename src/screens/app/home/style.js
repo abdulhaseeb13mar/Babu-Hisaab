@@ -49,7 +49,17 @@ const styles = height =>
       elevation: 5,
       backgroundColor: 'green',
     },
+    AllDuesBtn: {
+      borderTopLeftRadius: 30,
+      borderBottomLeftRadius: 30,
+      borderTopRightRadius: 0,
+      borderBottomRightRadius: 0,
+    },
     addDuesText: {fontSize: 20, fontWeight: 'bold', color: 'white'},
+    DuesBtnContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
   });
 
 export default styles;

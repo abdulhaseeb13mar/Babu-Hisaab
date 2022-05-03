@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   FlatList,
   TouchableOpacity,
+  Button,
 } from 'react-native';
 import constants from '../../../theme/constants';
 import firestore from '@react-native-firebase/firestore';
@@ -19,7 +20,7 @@ import {showSnackbar} from '../../../utils/snackbar';
 const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const {collections, actionTypes, appScreens} = constants;
+  const {collections, actionTypes, appScreens, url} = constants;
 
   const height = useSelector(state => state.HeightReducer);
   const user = useSelector(state => state.userReducer);
@@ -130,12 +131,22 @@ const Home = () => {
           </View>
         ) : (
           <View style={styles(height).listContainer}>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={GotoAddDues}
-              style={styles(height).AddDuesBtn}>
-              <Text style={styles(height).addDuesText}>Add Dues</Text>
-            </TouchableOpacity>
+            <View style={styles(height).DuesBtnContainer}>
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={GotoAddDues}
+                style={styles(height).AddDuesBtn}>
+                <Text style={styles(height).addDuesText}>Add Dues</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={() =>
+                  GoToDueSelection({name: 'everyone', photo: url.xordLogo})
+                }
+                style={[styles(height).AddDuesBtn, styles(height).AllDuesBtn]}>
+                <Text style={styles(height).addDuesText}>All Dues</Text>
+              </TouchableOpacity>
+            </View>
             <FlatList
               data={allUsers}
               renderItem={({item}) => (
