@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text} from 'react-native';
+import auth from '@react-native-firebase/auth';
 import styles from './style';
 import {isFormValid} from './validation';
 import {WrapperScreen} from '../../../components';
@@ -20,52 +21,41 @@ const Login = props => {
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
 
-  const authRef = firestore().collection(collections.AUTH).doc('auth');
-
-  const Signin = async () => {
+  const Signin = () => {
     const validation = isFormValid(email, password);
     if (!validation.status) {
       showSnackbar(validation.errMsg, snackbarType.SNACKBAR_ERROR);
     } else {
       setLoading(true);
-      const doc = await authRef.get();
-      if (!doc.exists) {
-        setLoading(false);
-        return showSnackbar('Error Logging In', snackbarType.SNACKBAR_ERROR);
-      }
-      const data = doc.data();
-      if (data[email.trim().toLowerCase()] === undefined) {
-        setLoading(false);
-        return showSnackbar('Invalid email', snackbarType.SNACKBAR_ERROR);
-      }
-      if (data[email] !== password.trim()) {
-        setLoading(false);
-        return showSnackbar('Invalid password', snackbarType.SNACKBAR_ERROR);
-      }
-
-      const userInfo = await firestore()
-        .collection(collections.USERS_INFO)
-        .where('email', '==', email.trim().toLowerCase())
-        .get();
-
-      if (userInfo.empty) {
-        setLoading(false);
-        return showSnackbar(
-          'No Such User in Database',
-          snackbarType.SNACKBAR_ERROR,
-        );
-      }
-      const userData = userInfo.docs[0].data();
-      console.log('userInfo', userInfo.docs[0].data());
-      try {
-        await AsyncStorage.setItem(async.user, JSON.stringify(userData));
-        props.setUserInfoAction(userData);
-      } catch (e) {
-        showSnackbar(
-          'error setting user info to local storage contact admin',
-          snackbarType.SNACKBAR_ERROR,
-        );
-      }
+      auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(async ({user}) => {
+          const userInfo = await firestore()
+            .collection(collections.USERS_INFO)
+            .doc(user.uid)
+            .get();
+          if (userInfo.exists) {
+            try {
+              await AsyncStorage.setItem(
+                async.user,
+                JSON.stringify(userInfo.data()),
+              );
+              props.setUserInfoAction(userInfo.data());
+            } catch (e) {
+              showSnackbar(
+                'error in user info contact admin',
+                snackbarType.SNACKBAR_ERROR,
+              );
+            }
+          }
+        })
+        .catch(err => {
+          showSnackbar(
+            'invalid email or password',
+            snackbarType.SNACKBAR_ERROR,
+          );
+          setLoading(false);
+        });
     }
   };
 

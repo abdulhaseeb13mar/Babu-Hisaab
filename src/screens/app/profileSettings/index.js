@@ -32,7 +32,7 @@ const ProfileSettings = () => {
         <Text style={styles(height).userName}>{user.name}</Text>
         <View style={styles(height).SettingTileBox}>
           <SettingTile
-            name="Change Password"
+            name="Reset Password"
             onPress={() =>
               navigation.navigate(constants.appScreens.ChangePassword)
             }

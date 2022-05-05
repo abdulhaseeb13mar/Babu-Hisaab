@@ -1,99 +1,66 @@
 import React, {useState} from 'react';
-import {View} from 'react-native';
+import {View, Text} from 'react-native';
 import {WrapperScreen} from '../../../components';
 import {useSelector} from 'react-redux';
 import constants from '../../../theme/constants';
 import {useNavigation} from '@react-navigation/core';
 import Header from '../../../components/Header';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Input from '../../../components/Input';
 import {showSnackbar} from '../../../utils/snackbar';
 import {Button} from 'react-native-paper';
+import auth from '@react-native-firebase/auth';
 import firebase from '@react-native-firebase/app';
 import {PasswordUpdated} from '../../../components/modals';
 
-const ChangePassword = () => {
+const ResetPassword = () => {
   const navigation = useNavigation();
-  const height = useSelector(state => state.HeightReducer);
   const user = useSelector(state => state.userReducer);
   const [loading, setLoading] = useState(false);
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
   const [successModal, setSuccessModal] = useState(false);
   const {snackbarType} = constants;
-  const changePassword = async () => {
-    if (oldPassword === '') {
-      return showSnackbar('enter old password', snackbarType.SNACKBAR_ERROR);
-    }
-    if (newPassword === '') {
-      return showSnackbar('enter new password', snackbarType.SNACKBAR_ERROR);
-    }
+
+  const resetPassword = async () => {
     setLoading(true);
-    const currentUser = await firebase.auth().currentUser;
-    const cred = await firebase.auth.EmailAuthProvider.credential(
-      user.email,
-      oldPassword,
-    );
-    await currentUser
-      .reauthenticateWithCredential(cred)
+    await auth()
+      .sendPasswordResetEmail(user.email)
       .then(() => {
-        currentUser
-          .updatePassword(newPassword)
-          .then(() => {
-            setSuccessModal(true);
-          })
-          .catch(e => {
-            showSnackbar(
-              'could not update password',
-              snackbarType.SNACKBAR_ERROR,
-            );
-          });
+        setSuccessModal(true);
       })
-      .catch(e => {
-        showSnackbar(
-          'could not authenticate user',
-          snackbarType.SNACKBAR_ERROR,
-        );
-      });
-    setOldPassword('');
-    setNewPassword('');
+      .catch(err =>
+        showSnackbar('could not send reset email', snackbarType.SNACKBAR_ERROR),
+      );
     setLoading(false);
   };
 
   return (
     <WrapperScreen>
       <Header
-        Title="Change Password"
+        Title="Reset Password"
         leftIconName="arrow-left"
         leftIcon={FontAwesome5}
         leftIconAction={() => navigation.goBack()}
       />
-      <View style={{flex: 1}}>
-        <Input
-          value={oldPassword}
-          placeholder="Enter old password"
-          style={{marginTop: height * 0.08}}
-          onChangeText={e => setOldPassword(e)}
-          secureTextEntry
-        />
-        <Input
-          value={newPassword}
-          placeholder="Enter new password"
-          style={{marginTop: height * 0.03}}
-          onChangeText={e => setNewPassword(e)}
-          secureTextEntry
-        />
+      <View style={{flex: 1, alignItems: 'center', paddingTop: 20}}>
+        <Text style={{textAlign: 'center', fontSize: 16}}>
+          A reset password email will be sent to{'\n'}
+          <Text style={{fontSize: 20, fontWeight: 'bold'}}>{user.email}</Text>
+        </Text>
+        <Text style={{textAlign: 'center', marginTop: 10, fontSize: 16}}>
+          please follow the link in the mail to reset password
+        </Text>
+        <Button
+          mode="contained"
+          onPress={resetPassword}
+          style={{
+            backgroundColor: loading ? 'rgba(0,0,0,0.12)' : 'green',
+            width: '70%',
+            marginTop: 20,
+          }}
+          loading={loading}
+          disabled={loading}>
+          {!loading && 'Send Reset Password Email'}
+        </Button>
       </View>
-      <Button
-        mode="contained"
-        onPress={changePassword}
-        style={{
-          backgroundColor: loading ? 'rgba(0,0,0,0.12)' : 'green',
-        }}
-        loading={loading}
-        disabled={loading}>
-        {!loading && 'change password'}
-      </Button>
       <PasswordUpdated
         isVisible={successModal}
         onBackdropPress={() => setSuccessModal(false)}
@@ -102,4 +69,4 @@ const ChangePassword = () => {
   );
 };
 
-export default ChangePassword;
+export default ResetPassword;
